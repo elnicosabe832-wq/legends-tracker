@@ -1,0 +1,30 @@
+# Render — https://render.com
+# Conecta el repo y Render leerá este archivo, o crea el servicio manualmente con estos valores.
+
+services:
+  - type: web
+    name: legends-tracker-api
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PRICE_ID
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false

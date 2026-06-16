@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legends Tracker</title>
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --bg-card: #111827;
+      --bg-card-hover: #1a2332;
+      --neon-green: #00ff88;
+      --neon-green-dim: #00cc6a;
+      --electric-blue: #00d4ff;
+      --electric-blue-dim: #0099cc;
+      --gold: #ffd700;
+      --gold-dim: #c9a800;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border: #1e293b;
+      --danger: #ff3366;
+      --glow-green: 0 0 20px rgba(0, 255, 136, 0.3);
+      --glow-blue: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse at 20% 0%, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(0, 212, 255, 0.06) 0%, transparent 50%);
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 14, 23, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .logo span.green { color: var(--neon-green); text-shadow: var(--glow-green); }
+    .logo span.blue { color: var(--electric-blue); text-shadow: var(--glow-blue); }
+
+    .pro-btn {
+      padding: 0.5rem 1.2rem;
+      border: 2px solid var(--gold);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .pro-btn:hover {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.1));
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .pro-btn.is-pro {
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05));
+    }
+
+    .pro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.8rem;
+      background: linear-gradient(135deg, var(--neon-green), var(--electric-blue));
+      color: var(--bg-dark);
+      font-weight: 800;
+      font-size: 0.7rem;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      margin-left: 1rem;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+
+    .nav-tab {
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active {
+      color: var(--neon-green);
+      border-bottom-color: var(--neon-green);
+      text-shadow: var(--glow-green);
+    }
+
+    /* ── Main ── */
+    .main { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+
+    .section { display: none; animation: fadeIn 0.4s ease; }
+    .section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Career Selector ── */
+    .career-selector {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .career-selector label {
+      font-weight: 600;
+      color: var(--electric-blue);
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+    }
+
+    .career-select {
+      padding: 0.6rem 1rem;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      min-width: 280px;
+      transition: border-color 0.3s;
+    }
+
+    .career-select:focus {
+      outline: none;
+      border-color: var(--neon-green);
+      box-shadow: var(--glow-green);
+    }
+
+    .career-select option.locked {
+      color: var(--text-muted);
+    }
+
+    /* ── Drag & Drop ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      padding: 4rem 2rem;
+      text-align: center;
+      transition: all 0.3s;
+      background: var(--bg-card);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--electric-blue);
+      background: var(--bg-card-hover);
+      box-shadow: var(--glow-blue);
+    }
+
+    .upload-zone .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .upload-zone h3 {
+      color: var(--electric-blue);
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .upload-zone p { color: var(--text-muted); font-size: 0.9rem; }
+
+    .upload-preview {
+      margin-top: 1.5rem;
+      display: none;
+    }
+
+    .upload-preview.visible { display: block; }
+
+    .upload-preview img {
+      max-width: 200px;
+      max-height: 150px;
+      border-radius: 8px;
+      border: 2px solid var(--neon-green);
+    }
+
+    .upload-hint {
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid var(--electric-blue);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .upload-hint strong { color: var(--electric-blue); }
+
+    .upload-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .upload-thumb {
+      width: 140px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid var(--neon-green);
+      box-shadow: var(--glow-green);
+    }
+
+    .upload-count {
+      color: var(--neon-green);
+      font-weight: 700;
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .demo-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1.2rem;
+      background: transparent;
+      border: 1px dashed var(--electric-blue);
+      color: var(--electric-blue);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .demo-btn:hover {
+      background: rgba(0, 212, 255, 0.1);
+      box-shadow: var(--glow-blue);
+    }
+
+    .welcome-banner {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.12), rgba(0, 212, 255, 0.08));
+      border: 1px solid var(--neon-green);
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .welcome-banner.hidden { display: none; }
+
+    .welcome-banner h3 {
+      color: var(--neon-green);
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .welcome-banner p { color: var(--text-muted); font-size: 0.85rem; }
+
+    .welcome-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.3rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .welcome-close:hover { color: var(--text); }
+
+    .loading-steps {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .free-tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      background: rgba(0, 255, 136, 0.15);
+      color: var(--neon-green);
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .process-btn {
+      display: block;
+      margin: 2rem auto 0;
+      padding: 1rem 2.5rem;
+      background: linear-gradient(135deg, var(--neon-green), var(--electric-blue));
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s;
+    }
+
+    .process-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+    }
+
+    .process-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Loading overlay ── */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 14, 23, 0.9);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .loading-overlay.visible { display: flex; }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid var(--border);
+      border-top-color: var(--neon-green);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      color: var(--neon-green);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── El Periódico ── */
+    .newspaper {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .newspaper-header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      padding: 1.5rem 2rem;
+      border-bottom: 3px solid var(--neon-green);
+      text-align: center;
+    }
+
+    .newspaper-header h1 {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 2.5rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .newspaper-header .subtitle {
+      color: var(--electric-blue);
+      font-size: 0.85rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    .newspaper-date {
+      text-align: right;
+      padding: 0.5rem 2rem;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .newspaper-body {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+    }
+
+    .headline {
+      font-family: 'Georgia', serif;
+      font-size: 2rem;
+      line-height: 1.2;
+      color: var(--neon-green);
+      margin-bottom: 1rem;
+      text-shadow: var(--glow-green);
+    }
+
+    .article-text {
+      font-family: 'Georgia', serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .article-text p { margin-bottom: 1rem; }
+
+    .sidebar-box {
+      background: rgba(0, 212, 255, 0.05);
+      border: 1px solid var(--electric-blue);
+      border-radius: 8px;
+      padding: 1.2rem;
+    }
+
+    .sidebar-box h4 {
+      color: var(--electric-blue);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid var(--electric-blue);
+      padding-bottom: 0.5rem;
+    }
+
+    .sidebar-stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      font-size: 0.9rem;
+    }
+
+    .sidebar-stat .name { color: var(--text); font-weight: 600; }
+    .sidebar-stat .value { color: var(--neon-green); font-weight: 700; }
+
+    /* ── Muro de Leyendas ── */
+    .muro-title {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .muro-title h2 {
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .muro-title h2 .green { color: var(--neon-green); }
+    .muro-title h2 .blue { color: var(--electric-blue); }
+
+    .muro-title p { color: var(--text-muted); margin-top: 0.5rem; }
+
+    .rankings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .ranking-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+    }
+
+    .ranking-card:hover {
+      border-color: var(--neon-green);
+      box-shadow: var(--glow-green);
+      transform: translateY(-3px);
+    }
+
+    .ranking-card h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid;
+    }
+
+    .ranking-card.goals h3 { color: var(--neon-green); border-color: var(--neon-green); }
+    .ranking-card.assists h3 { color: var(--electric-blue); border-color: var(--electric-blue); }
+    .ranking-card.matches h3 { color: var(--gold); border-color: var(--gold); }
+    .ranking-card.clean h3 { color: #a78bfa; border-color: #a78bfa; }
+
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .ranking-item:last-child { border-bottom: none; }
+
+    .ranking-pos {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .ranking-pos.gold { background: var(--gold); color: var(--bg-dark); }
+    .ranking-pos.silver { background: #c0c0c0; color: var(--bg-dark); }
+    .ranking-pos.bronze { background: #cd7f32; color: var(--bg-dark); }
+    .ranking-pos.normal { background: var(--border); color: var(--text-muted); }
+
+    .ranking-info { flex: 1; }
+    .ranking-info .player { font-weight: 600; font-size: 0.95rem; }
+    .ranking-info .detail { color: var(--text-muted); font-size: 0.8rem; }
+
+    .ranking-value {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--neon-green);
+    }
+
+    .compare-btn {
+      display: block;
+      margin: 0 auto;
+      padding: 1rem 2.5rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s;
+    }
+
+    .compare-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+    }
+
+    /* ── Season Tabs ── */
+    .season-tabs {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .season-tab {
+      padding: 0.55rem 1.2rem;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .season-tab:hover { color: var(--text); border-color: var(--text-muted); }
+
+    .season-tab.active {
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+      background: rgba(0, 255, 136, 0.08);
+      box-shadow: var(--glow-green);
+    }
+
+    .season-tab.total {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .season-tab.total.active {
+      background: rgba(255, 215, 0, 0.1);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
+    }
+
+    .season-badge {
+      display: inline-block;
+      margin-left: 0.4rem;
+      padding: 0.1rem 0.4rem;
+      background: rgba(0, 212, 255, 0.15);
+      color: var(--electric-blue);
+      font-size: 0.65rem;
+      border-radius: 4px;
+    }
+
+    /* ── Real Life Compare ── */
+    .real-compare {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .real-compare h3 {
+      color: var(--gold);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+    }
+
+    .real-compare > p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .compare-table th {
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      color: var(--electric-blue);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .compare-table td {
+      padding: 0.7rem 0.8rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .compare-table .you { color: var(--neon-green); font-weight: 700; }
+    .compare-table .real { color: var(--electric-blue); font-weight: 600; }
+    .compare-table .pct {
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .pct.high { color: var(--neon-green); }
+    .pct.mid { color: var(--gold); }
+    .pct.low { color: var(--text-muted); }
+
+    .demo-btns {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    /* ── Modal Premium ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 300;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-overlay.visible { display: flex; }
+
+    .modal {
+      background: linear-gradient(145deg, #1a1a2e, #0f3460);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 480px;
+      text-align: center;
+      box-shadow: 0 0 60px rgba(255, 215, 0, 0.2);
+      animation: modalPop 0.4s ease;
+      position: relative;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal .crown { font-size: 3.5rem; margin-bottom: 1rem; }
+
+    .modal h2 {
+      color: var(--gold);
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .modal p {
+      color: var(--text);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .modal .price {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--neon-green);
+      margin-bottom: 0.5rem;
+    }
+
+    .modal .price span { font-size: 1rem; color: var(--text-muted); }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .modal-btn-primary {
+      padding: 0.8rem 2rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+    }
+
+    .modal-btn-primary:hover {
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .modal-btn-secondary {
+      padding: 0.8rem 2rem;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .modal-btn-secondary:hover { color: var(--text); border-color: var(--text-muted); }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .modal-close:hover { color: var(--text); }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .header { padding: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+      .nav { padding: 0 1rem; overflow-x: auto; }
+      .main { padding: 1rem; }
+      .newspaper-body { grid-template-columns: 1fr; }
+      .headline { font-size: 1.5rem; }
+      .newspaper-header h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div style="display:flex;align-items:center;">
+      <div class="logo"><span class="green">Legends</span> <span class="blue">Tracker</span></div>
+      <span class="pro-badge" id="proBadge" style="display:none;">★ PRO</span>
+    </div>
+    <button class="pro-btn" id="proBtn" onclick="togglePro()">Simular Pago / Hacerse Pro</button>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <button class="nav-tab active" data-tab="carga" onclick="switchTab('carga')">📤 Carga</button>
+    <button class="nav-tab" data-tab="periodico" onclick="switchTab('periodico')">📰 El Periódico</button>
+    <button class="nav-tab" data-tab="muro" onclick="switchTab('muro')">🏆 Muro de Leyendas</button>
+  </nav>
+
+  <main class="main">
+
+    <!-- ═══ TAB: CARGA ═══ -->
+    <section class="section active" id="section-carga">
+      <div class="welcome-banner" id="welcomeBanner">
+        <div>
+          <h3>👋 ¡Bienvenido a Legends Tracker!</h3>
+          <p>Tu cuenta <strong>Gratis</strong> incluye 1 Modo Carrera: <strong>A.S. Roma</strong>. Sube capturas del Menú de plantilla de EA FC para actualizar tus estadísticas.</p>
+        </div>
+        <button class="welcome-close" onclick="dismissWelcome()">✕</button>
+      </div>
+
+      <div class="career-selector">
+        <label for="careerSelectCarga">Carrera Activa:</label>
+        <select class="career-select" id="careerSelectCarga" onchange="handleCareerChange(this)"></select>
+        <span class="free-tag" id="freeTag">GRATIS · 1/1</span>
+      </div>
+
+      <div class="upload-hint">
+        <strong>📋 Cómo subir tus datos:</strong> En EA Sports FC, ve a <em>Menú de plantilla → Estadísticas</em> y haz capturas de pantalla de la tabla de jugadores (como las de abajo). Puedes subir varias fotos a la vez — la IA las leerá todas.
+      </div>
+
+      <div class="upload-zone" id="uploadZone"
+           ondragover="handleDragOver(event)"
+           ondragleave="handleDragLeave(event)"
+           ondrop="handleDrop(event)"
+           onclick="triggerFileInput(event)">
+        <div class="icon">📸</div>
+        <h3>Arrastra tus capturas de EA FC aquí</h3>
+        <p>o haz clic para seleccionar fotos (JPG, PNG) — varias a la vez</p>
+        <div class="upload-preview" id="uploadPreview">
+          <div class="upload-grid" id="uploadGrid"></div>
+          <div class="upload-count" id="uploadCount"></div>
+        </div>
+        <div class="demo-btns">
+          <button class="demo-btn" onclick="loadDemoScreenshots(event, 1)">📷 Temporada 1 (capturas)</button>
+          <button class="demo-btn" onclick="loadDemoScreenshots(event, 2)">📷 Temporada 2 (capturas)</button>
+        </div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFileSelect(event)" />
+
+      <button class="process-btn" id="processBtn" disabled onclick="processWithAI()">
+        ⚡ Procesar con IA
+      </button>
+    </section>
+
+    <!-- ═══ TAB: EL PERIÓDICO ═══ -->
+    <section class="section" id="section-periodico">
+      <div class="career-selector">
+        <label for="careerSelectPeriodico">Carrera Activa:</label>
+        <select class="career-select" id="careerSelectPeriodico" onchange="handleCareerChange(this)"></select>
+      </div>
+
+      <div class="newspaper" id="newspaper"></div>
+    </section>
+
+    <!-- ═══ TAB: MURO DE LEYENDAS ═══ -->
+    <section class="section" id="section-muro">
+      <div class="career-selector">
+        <label for="careerSelectMuro">Carrera Activa:</label>
+        <select class="career-select" id="careerSelectMuro" onchange="handleCareerChange(this)"></select>
+      </div>
+
+      <div class="muro-title">
+        <h2><span class="green">Muro</span> de <span class="blue">Leyendas</span></h2>
+        <p id="muroSubtitle">Estadísticas históricas de tu Modo Carrera</p>
+      </div>
+
+      <div class="season-tabs" id="seasonTabs"></div>
+
+      <div class="rankings-grid" id="rankingsGrid"></div>
+
+      <div class="real-compare" id="realCompare"></div>
+
+      <button class="compare-btn" onclick="document.getElementById('realCompare').scrollIntoView({behavior:'smooth'})">
+        🏅 Comparar con Récords Reales
+      </button>
+    </section>
+
+  </main>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Procesando con IA...</div>
+    <div class="loading-steps" id="loadingSteps"></div>
+  </div>
+
+  <!-- Premium Modal -->
+  <div class="modal-overlay" id="premiumModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closePremiumModal()">✕</button>
+      <div class="crown">👑</div>
+      <h2>¡Pásate a Pro!</h2>
+      <p>¡Pásate a Pro para gestionar <strong>carreras ilimitadas</strong>! Registra todas tus partidas por solo 2,99€/mes. Desbloquea Pisa S.C., Inter, y todos tus Modos Carrera.</p>
+      <div class="price">2,99€<span>/mes</span></div>
+      <div class="modal-actions">
+        <button class="modal-btn-primary" onclick="upgradeToPro()">Hacerse Pro Ahora</button>
+        <button class="modal-btn-secondary" onclick="closePremiumModal()">Ahora no</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════
+    //  DATOS DE CARRERAS
+    // ═══════════════════════════════════════════
+    const CAREERS = {
+      roma: {
+        id: 'roma',
+        name: 'A.S. Roma',
+        subtitle: 'La Loba Capitalina',
+        premium: false,
+        seasons: [
+          {
+            id: 's1',
+            label: 'Temp. 2024/25',
+            players: [
+              { name: 'M. Svilar', pos: 'POR', matches: 62, goals: 0, assists: 0, cleanSheets: 18 },
+              { name: 'P. Dybala', pos: 'MCO', matches: 59, goals: 15, assists: 9, cleanSheets: 11 },
+              { name: 'G. Mancini', pos: 'DFC', matches: 54, goals: 0, assists: 1, cleanSheets: 13 },
+              { name: 'M. Soulé', pos: 'MCO', matches: 54, goals: 12, assists: 8, cleanSheets: 13 },
+              { name: 'L. Pellegrini', pos: 'MCO', matches: 52, goals: 6, assists: 7, cleanSheets: 10 },
+              { name: 'A. Dovbyk', pos: 'DC', matches: 52, goals: 33, assists: 2, cleanSheets: 15 },
+              { name: 'E. Ndicka', pos: 'DFC', matches: 50, goals: 0, assists: 1, cleanSheets: 14 },
+              { name: 'B. Cristante', pos: 'MC', matches: 48, goals: 6, assists: 3, cleanSheets: 10 },
+              { name: 'Angeliño', pos: 'LI', matches: 48, goals: 9, assists: 3, cleanSheets: 14 },
+              { name: 'L. Paredes', pos: 'MC', matches: 46, goals: 1, assists: 6, cleanSheets: 13 },
+              { name: 'K. Koné', pos: 'MC', matches: 46, goals: 3, assists: 3, cleanSheets: 5 },
+              { name: 'T. Baldanzi', pos: 'MCO', matches: 45, goals: 10, assists: 7, cleanSheets: 9 },
+              { name: 'V. Nelsson', pos: 'DFC', matches: 42, goals: 0, assists: 0, cleanSheets: 10 },
+              { name: 'D. Rensch', pos: 'LD', matches: 39, goals: 0, assists: 0, cleanSheets: 8 },
+              { name: 'O. Solbakken', pos: 'MD', matches: 38, goals: 3, assists: 1, cleanSheets: 1 },
+              { name: 'E. Shomurodov', pos: 'DC', matches: 38, goals: 14, assists: 2, cleanSheets: 4 },
+              { name: 'Z. Çelik', pos: 'LD', matches: 28, goals: 0, assists: 2, cleanSheets: 5 },
+              { name: 'S. El Shaarawy', pos: 'MI', matches: 27, goals: 1, assists: 3, cleanSheets: 4 }
+            ],
+            chronicle: {
+              headline: 'Dovbyk arrasa con 33 goles: la Roma escribe historia en Serie A',
+              body: [
+                'Artem Dovbyk se ha convertido en el referente goleador de la A.S. Roma con 33 tantos en 52 partidos. Su efectividad ha sido clave para los ambiciones europeas de la Loba Capitalina.',
+                'Paulo Dybala combina 15 goles y 9 asistencias en 59 encuentros, demostrando que sigue siendo el alma creativa del equipo. Junto a Matías Soulé (12 goles, 8 asistencias), forman un tridente ofensivo temible.',
+                'Mile Svilar ha disputado 62 partidos y ha firmado 18 porterías a cero, consolidándose como el jugador más utilizado del proyecto.'
+              ],
+              sidebar: [
+                { label: 'Goleador', name: 'A. Dovbyk', value: '33 goles' },
+                { label: 'Asistencias', name: 'P. Dybala', value: '9' },
+                { label: 'Portero', name: 'M. Svilar', value: '18 PC' },
+                { label: 'Más partidos', name: 'M. Svilar', value: '62 PJ' }
+              ]
+            }
+          },
+          {
+            id: 's2',
+            label: 'Temp. 2025/26',
+            players: [
+              { name: 'M. Svilar', pos: 'POR', matches: 54, goals: 0, assists: 3, cleanSheets: 7 },
+              { name: 'P. Dybala', pos: 'MCO', matches: 52, goals: 15, assists: 7, cleanSheets: 6 },
+              { name: 'B. Cristante', pos: 'MC', matches: 49, goals: 5, assists: 6, cleanSheets: 5 },
+              { name: 'L. Pellegrini', pos: 'MCO', matches: 49, goals: 16, assists: 8, cleanSheets: 7 },
+              { name: 'G. Mancini', pos: 'DFC', matches: 47, goals: 1, assists: 1, cleanSheets: 6 },
+              { name: 'A. Dovbyk', pos: 'DC', matches: 45, goals: 21, assists: 4, cleanSheets: 6 },
+              { name: 'E. Ndicka', pos: 'DFC', matches: 44, goals: 1, assists: 0, cleanSheets: 10 },
+              { name: 'K. Koné', pos: 'MC', matches: 43, goals: 8, assists: 3, cleanSheets: 3 },
+              { name: 'V. Nelsson', pos: 'DFC', matches: 42, goals: 0, assists: 1, cleanSheets: 4 },
+              { name: 'Angeliño', pos: 'LI', matches: 41, goals: 4, assists: 4, cleanSheets: 3 },
+              { name: 'A. Saelemaekers', pos: 'MD', matches: 41, goals: 4, assists: 5, cleanSheets: 3 },
+              { name: 'O. Solbakken', pos: 'MD', matches: 39, goals: 3, assists: 1, cleanSheets: 10 },
+              { name: 'T. Baldanzi', pos: 'MCO', matches: 38, goals: 14, assists: 6, cleanSheets: 3 },
+              { name: 'M. Soulé', pos: 'MCO', matches: 37, goals: 4, assists: 5, cleanSheets: 4 },
+              { name: 'L. Paredes', pos: 'MC', matches: 35, goals: 2, assists: 2, cleanSheets: 2 },
+              { name: 'D. Rensch', pos: 'LD', matches: 34, goals: 3, assists: 2, cleanSheets: 3 },
+              { name: 'E. Shomurodov', pos: 'DC', matches: 30, goals: 8, assists: 1, cleanSheets: 0 },
+              { name: 'E. Bove', pos: 'MC', matches: 29, goals: 6, assists: 0, cleanSheets: 7 },
+              { name: 'S. El Shaarawy', pos: 'MI', matches: 29, goals: 2, assists: 1, cleanSheets: 4 },
+              { name: 'Z. Çelik', pos: 'LD', matches: 18, goals: 1, assists: 2, cleanSheets: 1 },
+              { name: 'S. Abdulhamid', pos: 'LD', matches: 17, goals: 0, assists: 1, cleanSheets: 0 },
+              { name: 'N. Pisilli', pos: 'MC', matches: 12, goals: 0, assists: 0, cleanSheets: 2 },
+              { name: 'L. Cherubini', pos: 'MCO', matches: 6, goals: 3, assists: 0, cleanSheets: 2 }
+            ],
+            chronicle: {
+              headline: 'Pellegrini brilla con 16 goles: la Roma mantiene el ritmo en la nueva temporada',
+              body: [
+                'Lorenzo Pellegrini ha firmado su mejor temporada goleadora con 16 tantos y 8 asistencias en 49 partidos, liderando un ataque renovado donde Dovbyk aporta 21 goles más.',
+                'T. Baldanzi se consolida como revelación con 14 goles en 38 encuentros, mientras Dybala sigue siendo imprescindible (15 goles, 7 asistencias en 52 PJ).',
+                'En defensa, E. Ndicka lidera con 10 porterías a cero y Svilar suma 7 más en 54 partidos, manteniendo la solidez defensiva de la Loba.'
+              ],
+              sidebar: [
+                { label: 'Goleador', name: 'A. Dovbyk', value: '21 goles' },
+                { label: 'Asistencias', name: 'L. Pellegrini', value: '8' },
+                { label: 'Revelación', name: 'T. Baldanzi', value: '14 goles' },
+                { label: 'Más partidos', name: 'M. Svilar', value: '54 PJ' }
+              ]
+            }
+          }
+        ],
+        realLife: [
+          { category: 'Goles con el club', recordHolder: 'F. Totti', record: 307, unit: 'goles', stat: 'goals' },
+          { category: 'Asistencias con el club', recordHolder: 'F. Totti', record: 119, unit: 'asistencias', stat: 'assists' },
+          { category: 'Partidos con el club', recordHolder: 'F. Totti', record: 786, unit: 'partidos', stat: 'matches' },
+          { category: 'Porterías a cero (portero)', recordHolder: 'G. Siconolfi', record: 127, unit: 'PC', stat: 'cleanSheets', gkOnly: true }
+        ]
+      },
+      pisa: {
+        id: 'pisa',
+        name: 'Pisa S.C.',
+        subtitle: 'Jóvenes Promesas',
+        premium: true,
+        seasons: [
+          {
+            id: 's1',
+            label: 'Temp. 2024/25',
+            players: [
+              { name: 'E. Rodrigues', pos: 'DC', matches: 7, goals: 14, assists: 2, cleanSheets: 0 },
+              { name: 'M. Marin', pos: 'MCO', matches: 10, goals: 6, assists: 4, cleanSheets: 2 },
+              { name: 'F. Miretti', pos: 'MC', matches: 8, goals: 3, assists: 7, cleanSheets: 1 },
+              { name: 'E. Caprile', pos: 'POR', matches: 12, goals: 0, assists: 0, cleanSheets: 3 },
+              { name: 'J. Mendez', pos: 'DFC', matches: 10, goals: 0, assists: 0, cleanSheets: 4 },
+              { name: 'L. Torregrossa', pos: 'DC', matches: 9, goals: 5, assists: 2, cleanSheets: 0 }
+            ],
+            chronicle: {
+              headline: '¡Rodrigues arrasa en Serie B! El Pisa sueña con el ascenso',
+              body: [
+                'E. Rodrigues se ha convertido en la sensación de la temporada con 14 goles en 7 partidos.',
+                'F. Miretti lidera las asistencias con 7 pases de gol en 8 partidos.',
+                'J. Mendez ha mantenido la portería a cero en 4 de sus 10 partidos.'
+              ],
+              sidebar: [
+                { label: 'Goleador', name: 'E. Rodrigues', value: '14 goles' },
+                { label: 'Asistencias', name: 'F. Miretti', value: '7' },
+                { label: 'Defensa', name: 'J. Mendez', value: '4 PC' },
+                { label: 'Más partidos', name: 'E. Caprile', value: '12 PJ' }
+              ]
+            }
+          }
+        ],
+        realLife: []
+      }
+    };
+
+    const DEMO_SCREENSHOTS = {
+      1: ['assets/roma-stats-1.png','assets/roma-stats-2.png','assets/roma-stats-3.png','assets/roma-stats-4.png'],
+      2: ['assets/roma-s2-1.png','assets/roma-s2-2.png','assets/roma-s2-3.png','assets/roma-s2-4.png']
+    };
+
+    const LOADING_STEPS = [
+      'Leyendo Menú de plantilla...',
+      'Extrayendo goleadores y asistentes...',
+      'Calculando porterías a cero...',
+      'Generando crónica deportiva...'
+    ];
+
+    // ═══════════════════════════════════════════
+    //  ESTADO DE LA APP
+    // ═══════════════════════════════════════════
+    let isPro = false;
+    let activeCareer = 'roma';
+    let activeSeason = 'total';
+    let uploadedImages = [];
+    let pendingUploadSeason = null;
+
+    const selectIds = ['careerSelectCarga', 'careerSelectPeriodico', 'careerSelectMuro'];
+
+    // ═══════════════════════════════════════════
+    //  HELPERS DE TEMPORADAS
+    // ═══════════════════════════════════════════
+    function getCareerSeasons(career) {
+      return career.seasons || [];
+    }
+
+    function aggregatePlayers(seasons) {
+      const map = {};
+      seasons.forEach(s => {
+        s.players.forEach(p => {
+          if (!map[p.name]) map[p.name] = { ...p };
+          else {
+            map[p.name].matches += p.matches;
+            map[p.name].goals += p.goals;
+            map[p.name].assists += p.assists;
+            map[p.name].cleanSheets += p.cleanSheets;
+          }
+        });
+      });
+      return Object.values(map);
+    }
+
+    function buildRankings(players) {
+      const top = (arr, key) => [...arr].sort((a, b) => b[key] - a[key]).slice(0, 4)
+        .map(p => ({ name: p.name, pos: p.pos, matches: p.matches, value: p[key] }));
+      return {
+        goals: top(players, 'goals'),
+        assists: top(players, 'assists'),
+        matches: top(players, 'matches'),
+        cleanSheets: top(players, 'cleanSheets')
+      };
+    }
+
+    function getSeasonData(career, seasonId) {
+      const seasons = getCareerSeasons(career);
+      if (seasonId === 'total') {
+        return { label: 'Total Histórico', players: aggregatePlayers(seasons), chronicle: seasons[seasons.length - 1]?.chronicle };
+      }
+      const s = seasons.find(x => x.id === seasonId);
+      return s ? { label: s.label, players: s.players, chronicle: s.chronicle } : null;
+    }
+
+    // ═══════════════════════════════════════════
+    //  INICIALIZACIÓN
+    // ═══════════════════════════════════════════
+    function init() {
+      populateSelects();
+      renderSeasonTabs();
+      renderNewspaper();
+      renderRankings();
+      renderRealCompare();
+    }
+
+    function populateSelects() {
+      selectIds.forEach(id => {
+        const select = document.getElementById(id);
+        select.innerHTML = '';
+
+        Object.values(CAREERS).forEach(career => {
+          const opt = document.createElement('option');
+          opt.value = career.id;
+          opt.textContent = `${career.name} (${career.subtitle})`;
+          if (career.premium && !isPro) {
+            opt.textContent += ' 🔒';
+            opt.dataset.locked = 'true';
+          }
+          select.appendChild(opt);
+        });
+
+        const createOpt = document.createElement('option');
+        createOpt.value = '__create__';
+        createOpt.textContent = '+ Crear Nueva Carrera (Pisa, Inter, etc.)';
+        select.appendChild(createOpt);
+
+        select.value = activeCareer;
+      });
+    }
+
+    // ═══════════════════════════════════════════
+    //  NAVEGACIÓN
+    // ═══════════════════════════════════════════
+    function switchTab(tab) {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(`section-${tab}`).classList.add('active');
+    }
+
+    // ═══════════════════════════════════════════
+    //  CARRERA ACTIVA
+    // ═══════════════════════════════════════════
+    function handleCareerChange(select) {
+      if (select.value === '__create__') {
+        select.value = activeCareer;
+        if (!isPro) {
+          openPremiumModal();
+        } else {
+          alert('🎮 Próximamente: Crear una nueva carrera personalizada.');
+        }
+        return;
+      }
+
+      const career = CAREERS[select.value];
+      if (career.premium && !isPro) {
+        select.value = activeCareer;
+        openPremiumModal();
+        return;
+      }
+
+      activeCareer = select.value;
+      selectIds.forEach(id => {
+        document.getElementById(id).value = activeCareer;
+      });
+
+      activeSeason = 'total';
+      renderSeasonTabs();
+      renderNewspaper();
+      renderRankings();
+      renderRealCompare();
+    }
+
+    function switchSeason(seasonId) {
+      activeSeason = seasonId;
+      renderSeasonTabs();
+      renderNewspaper();
+      renderRankings();
+      renderRealCompare();
+    }
+
+    function renderSeasonTabs() {
+      const career = CAREERS[activeCareer];
+      const seasons = getCareerSeasons(career);
+      const container = document.getElementById('seasonTabs');
+      if (!seasons.length) { container.innerHTML = ''; return; }
+
+      container.innerHTML = seasons.map(s =>
+        `<button class="season-tab ${activeSeason === s.id ? 'active' : ''}" onclick="switchSeason('${s.id}')">${s.label}</button>`
+      ).join('') +
+        `<button class="season-tab total ${activeSeason === 'total' ? 'active' : ''}" onclick="switchSeason('total')">📊 Total Histórico<span class="season-badge">${seasons.length} temps.</span></button>`;
+    }
+
+    // ═══════════════════════════════════════════
+    //  FREEMIUM / PRO
+    // ═══════════════════════════════════════════
+    function togglePro() {
+      if (isPro) {
+        isPro = false;
+        if (activeCareer === 'pisa') activeCareer = 'roma';
+        updateProUI();
+        populateSelects();
+        renderSeasonTabs();
+        renderNewspaper();
+        renderRankings();
+        renderRealCompare();
+      } else {
+        upgradeToPro();
+      }
+    }
+
+    function dismissWelcome() {
+      document.getElementById('welcomeBanner').classList.add('hidden');
+    }
+
+    function upgradeToPro() {
+      isPro = true;
+      closePremiumModal();
+      updateProUI();
+      populateSelects();
+      renderSeasonTabs();
+      renderNewspaper();
+      renderRankings();
+      renderRealCompare();
+    }
+
+    function updateProUI() {
+      const btn = document.getElementById('proBtn');
+      const badge = document.getElementById('proBadge');
+      const freeTag = document.getElementById('freeTag');
+      if (isPro) {
+        btn.textContent = '✓ Modo Pro Activo (clic para volver a Gratis)';
+        btn.classList.add('is-pro');
+        badge.style.display = 'inline-flex';
+        freeTag.textContent = 'PRO · Ilimitadas';
+        freeTag.style.background = 'rgba(255, 215, 0, 0.15)';
+        freeTag.style.color = 'var(--gold)';
+      } else {
+        btn.textContent = 'Simular Pago / Hacerse Pro';
+        btn.classList.remove('is-pro');
+        badge.style.display = 'none';
+        freeTag.textContent = 'GRATIS · 1/1';
+        freeTag.style.background = 'rgba(0, 255, 136, 0.15)';
+        freeTag.style.color = 'var(--neon-green)';
+      }
+    }
+
+    function openPremiumModal() {
+      document.getElementById('premiumModal').classList.add('visible');
+    }
+
+    function closePremiumModal() {
+      document.getElementById('premiumModal').classList.remove('visible');
+    }
+
+    // ═══════════════════════════════════════════
+    //  DRAG & DROP / UPLOAD
+    // ═══════════════════════════════════════════
+    function triggerFileInput(e) {
+      if (e.target.closest('.demo-btn')) return;
+      document.getElementById('fileInput').click();
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('uploadZone').classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      document.getElementById('uploadZone').classList.remove('dragover');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('uploadZone').classList.remove('dragover');
+      addImages([...e.dataTransfer.files]);
+    }
+
+    function handleFileSelect(e) {
+      addImages([...e.target.files]);
+      e.target.value = '';
+    }
+
+    function addImages(files) {
+      const images = files.filter(f => f.type.startsWith('image/'));
+      if (!images.length) return;
+
+      let pending = images.length;
+      images.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          uploadedImages.push(ev.target.result);
+          pending--;
+          if (pending === 0) renderUploadPreview();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadDemoScreenshots(e, season) {
+      e.stopPropagation();
+      pendingUploadSeason = season === 2 ? 's2' : 's1';
+      uploadedImages = [...DEMO_SCREENSHOTS[season]];
+      renderUploadPreview();
+    }
+
+    function renderUploadPreview() {
+      const grid = document.getElementById('uploadGrid');
+      const count = document.getElementById('uploadCount');
+      const preview = document.getElementById('uploadPreview');
+
+      grid.innerHTML = uploadedImages.map(src =>
+        `<img class="upload-thumb" src="${src}" alt="Captura EA FC" />`
+      ).join('');
+
+      const seasonLabel = pendingUploadSeason === 's2' ? ' (Temp. 2025/26)' : pendingUploadSeason === 's1' ? ' (Temp. 2024/25)' : '';
+      count.textContent = `${uploadedImages.length} captura${uploadedImages.length !== 1 ? 's' : ''} lista${uploadedImages.length !== 1 ? 's' : ''}${seasonLabel}`;
+      preview.classList.add('visible');
+      document.getElementById('processBtn').disabled = uploadedImages.length === 0;
+    }
+
+    // ═══════════════════════════════════════════
+    //  PROCESAR CON IA
+    // ═══════════════════════════════════════════
+    function processWithAI() {
+      const overlay = document.getElementById('loadingOverlay');
+      const textEl = document.getElementById('loadingText');
+      const stepsEl = document.getElementById('loadingSteps');
+      overlay.classList.add('visible');
+
+      let step = 0;
+      textEl.textContent = LOADING_STEPS[0];
+      stepsEl.textContent = `Analizando ${uploadedImages.length} captura${uploadedImages.length !== 1 ? 's' : ''} de A.S. Roma...`;
+
+      const interval = setInterval(() => {
+        step++;
+        if (step < LOADING_STEPS.length) {
+          textEl.textContent = LOADING_STEPS[step];
+        }
+      }, 500);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        overlay.classList.remove('visible');
+        if (pendingUploadSeason) {
+          activeSeason = pendingUploadSeason;
+          pendingUploadSeason = null;
+        }
+        renderSeasonTabs();
+        renderNewspaper();
+        renderRankings();
+        renderRealCompare();
+        switchTab('periodico');
+      }, 2000);
+    }
+
+    // ═══════════════════════════════════════════
+    //  EL PERIÓDICO
+    // ═══════════════════════════════════════════
+    function renderNewspaper() {
+      const career = CAREERS[activeCareer];
+      const seasonData = getSeasonData(career, activeSeason);
+      if (!seasonData) return;
+      const c = seasonData.chronicle;
+      const today = new Date().toLocaleDateString('es-ES', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+
+      document.getElementById('newspaper').innerHTML = `
+        <div class="newspaper-header">
+          <h1>El Periódico</h1>
+          <div class="subtitle">Edición ${career.name} — ${seasonData.label}</div>
+        </div>
+        <div class="newspaper-date">${today}</div>
+        <div class="newspaper-body">
+          <div>
+            <h2 class="headline">${c.headline}</h2>
+            <div class="article-text">
+              ${c.body.map(p => `<p>${p}</p>`).join('')}
+            </div>
+          </div>
+          <div>
+            <div class="sidebar-box">
+              <h4>📊 Datos Clave</h4>
+              ${c.sidebar.map(s => `
+                <div class="sidebar-stat">
+                  <span class="name">${s.label}: ${s.name}</span>
+                  <span class="value">${s.value}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ═══════════════════════════════════════════
+    //  MURO DE LEYENDAS
+    // ═══════════════════════════════════════════
+    function renderRankings() {
+      const career = CAREERS[activeCareer];
+      const seasonData = getSeasonData(career, activeSeason);
+      if (!seasonData) return;
+      const r = buildRankings(seasonData.players);
+
+      document.getElementById('muroSubtitle').textContent =
+        `${seasonData.label} — ${career.name} (${career.subtitle}) · Todas las competiciones`;
+
+      const rankings = [
+        { cls: 'goals', title: '⚽ Goleadores', items: r.goals },
+        { cls: 'assists', title: '🎯 Asistentes', items: r.assists },
+        { cls: 'matches', title: '📋 Más Partidos', items: r.matches },
+        { cls: 'clean', title: '🧤 Porterías a Cero', items: r.cleanSheets }
+      ];
+
+      const posClass = i => ['gold', 'silver', 'bronze', 'normal'][i] || 'normal';
+
+      document.getElementById('rankingsGrid').innerHTML = rankings.map(rk => `
+        <div class="ranking-card ${rk.cls}">
+          <h3>${rk.title}</h3>
+          ${rk.items.map((item, i) => `
+            <div class="ranking-item">
+              <div class="ranking-pos ${posClass(i)}">${i + 1}</div>
+              <div class="ranking-info">
+                <div class="player">${item.name}</div>
+                <div class="detail">${item.pos} · ${item.matches} PJ</div>
+              </div>
+              <div class="ranking-value">${item.value}</div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    function getTopPlayer(players, stat, gkOnly) {
+      const key = stat;
+      let pool = players;
+      if (gkOnly) pool = players.filter(p => p.pos === 'POR');
+      if (!pool.length) return { name: '—', pos: '', [key]: 0 };
+      return [...pool].sort((a, b) => b[key] - a[key])[0];
+    }
+
+    function renderRealCompare() {
+      const career = CAREERS[activeCareer];
+      const container = document.getElementById('realCompare');
+      if (!career.realLife || !career.realLife.length) {
+        container.innerHTML = '';
+        return;
+      }
+
+      const seasonData = getSeasonData(career, activeSeason);
+      const players = seasonData.players;
+
+      const rows = career.realLife.map(item => {
+        const top = getTopPlayer(players, item.stat, item.gkOnly);
+        const yourVal = top[item.stat] || 0;
+        const pct = Math.min(100, Math.round((yourVal / item.record) * 100));
+        const pctClass = pct >= 50 ? 'high' : pct >= 20 ? 'mid' : 'low';
+
+        return `<tr>
+          <td>${item.category}</td>
+          <td class="you">${top.name}: ${yourVal} ${item.unit}</td>
+          <td class="real">${item.recordHolder}: ${item.record} ${item.unit}</td>
+          <td class="pct ${pctClass}">${pct}%</td>
+        </tr>`;
+      }).join('');
+
+      container.innerHTML = `
+        <h3>⚖️ Tu Carrera vs. Historia Real del Club</h3>
+        <p>Tus estadísticas de <strong>${seasonData.label}</strong> (todas las competiciones: Serie A, Copa, Europa, amistosos…) comparadas con los <strong>récords históricos oficiales de la A.S. Roma</strong>.</p>
+        <table class="compare-table">
+          <thead><tr><th>Récord del club</th><th>Tu Modo Carrera</th><th>Récord histórico real</th><th>%</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    // Arrancar
+    init();
+  </script>
+</body>
+</html>
