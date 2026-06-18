@@ -41,13 +41,21 @@ function buildCorsOrigins() {
 
 const corsOrigins = buildCorsOrigins();
 
+function isAllowedOrigin(origin) {
+  const normalized = origin.replace(/\/$/, '');
+  if (corsOrigins.includes(normalized)) return true;
+  // Despliegues Vercel del proyecto (producción + previews)
+  if (/^https:\/\/legends-tracker[a-z0-9-]*\.vercel\.app$/i.test(normalized)) return true;
+  return false;
+}
+
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || corsOrigins.includes(origin.replace(/\/$/, ''))) {
+    if (!origin || isAllowedOrigin(origin)) {
       callback(null, true);
       return;
     }
-    callback(new Error(`CORS bloqueado para: ${origin}`));
+    callback(null, false);
   },
 }));
 
