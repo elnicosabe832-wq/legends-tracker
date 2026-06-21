@@ -556,8 +556,12 @@
     .welcome-close:hover { color: var(--text); }
 
     .loading-steps {
+      max-width: 22rem;
+      text-align: center;
       color: var(--text-muted);
       font-size: 0.85rem;
+      line-height: 1.5;
+      padding: 0 1rem;
       margin-top: 0.5rem;
     }
 
@@ -632,6 +636,72 @@
       font-size: 1.1rem;
       letter-spacing: 2px;
       text-transform: uppercase;
+    }
+
+    .cold-start-hint {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .site-footer {
+      margin-top: 2rem;
+      padding: 1.5rem 2rem 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      line-height: 1.6;
+    }
+
+    .site-footer a {
+      color: var(--electric-blue-dim);
+      text-decoration: none;
+    }
+
+    .site-footer a:hover { color: var(--electric-blue); }
+
+    .legal-page {
+      max-width: 42rem;
+      line-height: 1.65;
+    }
+
+    .legal-page h1 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      color: var(--neon-green);
+    }
+
+    .legal-updated {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .legal-page section {
+      margin-bottom: 1.75rem;
+    }
+
+    .legal-page h2 {
+      font-size: 1.05rem;
+      margin-bottom: 0.6rem;
+      color: var(--text);
+    }
+
+    .legal-page ul {
+      padding-left: 1.25rem;
+      color: var(--text-muted);
+    }
+
+    .legal-page li { margin-bottom: 0.35rem; }
+
+    .legal-back { margin-top: 2rem; }
+
+    .legal-back a {
+      color: var(--electric-blue);
+      text-decoration: none;
     }
 
     /* â”€â”€ El PeriÃ³dico â”€â”€ */
@@ -1722,6 +1792,7 @@
       .header {
         padding: 0.75rem 1rem;
         gap: 0.5rem;
+        flex-wrap: wrap;
       }
 
       .logo { font-size: 1.15rem; letter-spacing: 1px; }

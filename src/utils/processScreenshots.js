@@ -30,8 +30,8 @@ async function safeJson(res) {
     return JSON.parse(text);
   } catch {
     throw new Error(
-      'El servidor devolvió una respuesta inválida. ' +
-      'Asegúrate de ejecutar npm run dev (arranca web + API juntos).'
+      'El servidor tardó demasiado en responder.\n\n' +
+      'Vuelve a pulsar Procesar en 1 minuto (Render puede estar despertando).'
     );
   }
 }
@@ -43,38 +43,44 @@ export async function processScreenshots(images, teamName) {
     health = await safeJson(healthRes);
   } catch {
     throw new Error(
-      'No se puede conectar al servidor de lectura.\n\n' +
-      'Cierra la terminal y ejecuta:\n' +
-      'npm run dev\n\n' +
-      '(no uses solo "vite")'
+      'No se puede conectar al servidor.\n\n' +
+      'Espera 30–60 s y vuelve a intentarlo (el servidor puede estar despertando).\n' +
+      'Comprueba tu conexión a internet.'
     );
   }
 
   if (!health.hasApiKey) {
-    throw new Error(
-      'Falta configurar la clave de OpenAI.\n\n' +
-      '1. Crea un archivo .env en la carpeta FL\n' +
-      '2. Añade: OPENAI_API_KEY=sk-tu-clave\n' +
-      '3. Reinicia con npm run dev'
-    );
+    throw new Error('El servidor no tiene configurada la lectura IA. Inténtalo más tarde.');
   }
 
-  const res = await fetch(apiUrl('/api/process-screenshots'), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ images, teamName }),
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 120000);
+
+  let res;
+  try {
+    res = await fetch(apiUrl('/api/process-screenshots'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ images, teamName }),
+      signal: controller.signal,
+    });
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error(
+        'El procesado tardó más de 2 minutos.\n\n' +
+        'Prueba con menos capturas o espera 1 min y vuelve a intentar.',
+      );
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
 
   const data = await safeJson(res);
 
   if (!res.ok) {
     if (data.error === 'MISSING_API_KEY') {
-      throw new Error(
-        'Falta configurar la clave de OpenAI.\n\n' +
-        '1. Crea un archivo .env en la carpeta FL\n' +
-        '2. Añade: OPENAI_API_KEY=sk-tu-clave\n' +
-        '3. Reinicia con npm run dev'
-      );
+      throw new Error('El servidor no tiene configurada la lectura IA. Inténtalo más tarde.');
     }
     throw new Error(data.message || data.error || `Error del servidor (${res.status})`);
   }

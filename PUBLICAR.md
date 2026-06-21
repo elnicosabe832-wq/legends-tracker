@@ -8,8 +8,8 @@
 
 | Parte | Dónde | URL ejemplo |
 |-------|--------|-------------|
-| Web (React) | [Vercel](https://vercel.com) | `https://legends-tracker.vercel.app` |
-| API (Node) | [Render](https://render.com) | `https://legends-tracker-api.onrender.com` |
+| Web (React) | [Vercel](https://vercel.com) | `https://legends-tracker-five.vercel.app` |
+| API (Node) | [Render](https://render.com) | `https://legends-tracker.onrender.com` |
 | Auth / datos | Supabase | ya configurado |
 | Pagos | Stripe | webhook en producción |
 
@@ -61,7 +61,7 @@ git push -u origin main
 | `CORS_ORIGINS` | *(misma URL de Vercel)* |
 
 5. **Create Web Service**
-6. Copia la URL del servicio, ej. `https://legends-tracker-api.onrender.com`
+6. Copia la URL del servicio, ej. `https://legends-tracker.onrender.com`
 7. Prueba: abre `https://TU-API.onrender.com/api/health` → debe decir `"ok": true`
 
 ---
@@ -78,17 +78,17 @@ git push -u origin main
 |----------|--------|
 | `VITE_SUPABASE_URL` | https://xxx.supabase.co |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | sb_publishable_... |
-| `VITE_API_URL` | `https://legends-tracker-api.onrender.com` *(sin barra final)* |
+| `VITE_API_URL` | `https://legends-tracker.onrender.com` *(sin barra final)* |
 
 6. **Deploy**
-7. Copia tu URL, ej. `https://legends-tracker.vercel.app`
+7. Copia tu URL, ej. `https://legends-tracker-five.vercel.app`
 
 ### Vuelve a Render y actualiza
 
 En las variables de Render:
 
-- `APP_URL` = `https://legends-tracker.vercel.app`
-- `CORS_ORIGINS` = `https://legends-tracker.vercel.app`
+- `APP_URL` = `https://legends-tracker-five.vercel.app`
+- `CORS_ORIGINS` = `https://legends-tracker-five.vercel.app`
 
 Guarda → Render redeploy automático.
 
@@ -99,7 +99,7 @@ Guarda → Render redeploy automático.
 En local usabas `stripe listen`. En producción el webhook va directo a Render.
 
 1. [dashboard.stripe.com/webhooks](https://dashboard.stripe.com/webhooks) → **Add endpoint**
-2. **URL:** `https://legends-tracker-api.onrender.com/api/stripe/webhook`
+2. **URL:** `https://legends-tracker.onrender.com/api/stripe/webhook`
 3. Eventos:
    - `checkout.session.completed`
    - `customer.subscription.updated`

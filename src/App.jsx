@@ -10,6 +10,8 @@ import LoadingOverlay from './components/LoadingOverlay';
 import CargaPage from './pages/CargaPage';
 import PeriodicoPage from './pages/PeriodicoPage';
 import MuroPage from './pages/MuroPage';
+import PrivacidadPage from './pages/PrivacidadPage';
+import Footer from './components/Footer';
 import './App.css';
 
 export default function App() {
@@ -23,8 +25,10 @@ export default function App() {
             <Route path="/" element={<CargaPage />} />
             <Route path="/periodico" element={<PeriodicoPage />} />
             <Route path="/muro" element={<MuroPage />} />
+            <Route path="/privacidad" element={<PrivacidadPage />} />
           </Routes>
         </main>
+        <Footer />
         <PremiumModal />
         <CreateCareerModal />
         <AuthModal />

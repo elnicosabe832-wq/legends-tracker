@@ -79,6 +79,7 @@ export default function CargaPage() {
 
     setLoading(true);
     setLoadingText(LOADING_STEPS[0]);
+    setLoadingSteps('La primera carga puede tardar ~1 min (servidor despertando). No cierres la app.');
 
     try {
       setLoadingText('Preparando capturas...');
@@ -185,7 +186,7 @@ export default function CargaPage() {
           >
             <div className="icon">📸</div>
             <h3>Arrastra tus capturas de EA FC aquí</h3>
-            <p>o haz clic para seleccionar fotos (JPG, PNG) — varias a la vez</p>
+            <p>o toca aquí para elegir fotos de la galería (JPG, PNG) — varias a la vez</p>
 
             {images.length > 0 && (
               <div className="upload-preview visible">
@@ -209,6 +210,10 @@ export default function CargaPage() {
             style={{ display: 'none' }}
             onChange={(e) => { addFiles(e.target.files); e.target.value = ''; }}
           />
+
+          <p className="cold-start-hint">
+            Si la app lleva un rato sin usarse, el procesado puede tardar hasta 1 minuto la primera vez.
+          </p>
 
           <button
             className={`process-btn ${processMode === 'replace' ? 'replace' : ''}`}
