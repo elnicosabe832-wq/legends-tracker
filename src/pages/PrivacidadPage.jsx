@@ -1,6 +1,13 @@
 import { Link } from 'react-router-dom';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function PrivacidadPage() {
+  usePageMeta({
+    title: 'Privacidad',
+    description: 'Política de privacidad de Legends Tracker: datos, Supabase, OpenAI, Stripe y derechos RGPD.',
+    path: '/privacidad',
+  });
+
   return (
     <div className="page legal-page">
       <h1>Política de privacidad</h1>

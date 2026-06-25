@@ -6,6 +6,8 @@ import EmptyCareerState from '../components/EmptyCareerState';
 import OnboardingGuide from '../components/OnboardingGuide';
 import { prepareImagesForUpload, processScreenshots } from '../utils/processScreenshots';
 import { seasonLabel } from '../utils/seasonUtils';
+import LandingHero from '../components/LandingHero';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const LOADING_STEPS = [
   'Leyendo Menú de plantilla...',
@@ -15,6 +17,8 @@ const LOADING_STEPS = [
 ];
 
 export default function CargaPage() {
+  usePageMeta({ path: '/' });
+
   const navigate = useNavigate();
   const {
     welcomeDismissed,
@@ -111,7 +115,9 @@ export default function CargaPage() {
 
   return (
     <div className="page">
-      {!welcomeDismissed && (
+      {!hasCareer && <LandingHero />}
+
+      {!welcomeDismissed && hasCareer && (
         <div className="welcome-banner">
           <div>
             <h3>👋 ¡Bienvenido a Legends Tracker!</h3>
