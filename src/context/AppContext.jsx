@@ -510,7 +510,7 @@ export function AppProvider({ children }) {
 
 
 
-  const startProCheckout = useCallback(async () => {
+  const startProCheckout = useCallback(async (affiliateCode = '') => {
 
     if (!user) {
 
@@ -526,7 +526,7 @@ export function AppProvider({ children }) {
 
     try {
 
-      const url = await createCheckoutSession();
+      const url = await createCheckoutSession(affiliateCode);
 
       window.location.href = url;
 

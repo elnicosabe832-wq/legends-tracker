@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "start": "node server/index.js",
     "verify:env": "node scripts/verify-env.mjs",
-    "check:deploy": "node scripts/check-deploy.mjs"
+    "check:deploy": "node scripts/check-deploy.mjs",
+    "report:affiliates": "node scripts/affiliate-report.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",

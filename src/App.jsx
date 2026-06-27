@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { captureReferralFromUrl } from './lib/referrals';
 import { AppProvider } from './context/AppContext';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
@@ -18,6 +20,10 @@ import Footer from './components/Footer';
 import './App.css';
 
 function AppRoutes() {
+  useEffect(() => {
+    captureReferralFromUrl();
+  }, []);
+
   return (
     <>
       <Header />

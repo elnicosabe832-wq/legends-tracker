@@ -1,4 +1,11 @@
+import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+import {
+  getStoredReferralCode,
+  setStoredReferralCode,
+  normalizeReferralCode,
+} from '../lib/referrals';
+import { validateReferralCode } from '../lib/referralApi';
 
 export default function PremiumModal() {
   const {
@@ -10,7 +17,47 @@ export default function PremiumModal() {
     setShowAuthModal,
   } = useApp();
 
+  const [referralCode, setReferralCode] = useState('');
+  const [referralHint, setReferralHint] = useState('');
+  const [referralValid, setReferralValid] = useState(null);
+
+  useEffect(() => {
+    if (!showPremiumModal) return;
+    setReferralCode(getStoredReferralCode());
+    setReferralHint('');
+    setReferralValid(null);
+  }, [showPremiumModal]);
+
   if (!showPremiumModal) return null;
+
+  const handleReferralChange = (value) => {
+    const next = normalizeReferralCode(value);
+    setReferralCode(next);
+    setStoredReferralCode(next);
+    setReferralHint('');
+    setReferralValid(null);
+  };
+
+  const handleReferralBlur = async () => {
+    if (!referralCode) {
+      setReferralHint('');
+      setReferralValid(null);
+      return;
+    }
+    try {
+      const result = await validateReferralCode(referralCode);
+      if (result.valid) {
+        setReferralValid(true);
+        setReferralHint(result.displayName ? `Código de ${result.displayName}` : 'Código válido');
+      } else {
+        setReferralValid(false);
+        setReferralHint(result.message || 'Código no válido');
+      }
+    } catch {
+      setReferralValid(null);
+      setReferralHint('');
+    }
+  };
 
   const handleCheckout = () => {
     if (!user) {
@@ -18,7 +65,7 @@ export default function PremiumModal() {
       setShowAuthModal(true);
       return;
     }
-    startProCheckout();
+    startProCheckout(referralCode);
   };
 
   return (
@@ -33,6 +80,27 @@ export default function PremiumModal() {
           y compara tus récords con la historia del equipo.
         </p>
         <div className="price">1,99€<span>/mes</span></div>
+
+        <label className="referral-field">
+          <span className="referral-label">Código de creador (opcional)</span>
+          <input
+            type="text"
+            className={`referral-input${referralValid === true ? ' valid' : ''}${referralValid === false ? ' invalid' : ''}`}
+            placeholder="Ej. TORRE4"
+            value={referralCode}
+            maxLength={32}
+            autoComplete="off"
+            spellCheck={false}
+            onChange={(e) => handleReferralChange(e.target.value)}
+            onBlur={handleReferralBlur}
+          />
+          {referralHint && (
+            <span className={`referral-hint${referralValid === false ? ' error' : ''}`}>
+              {referralHint}
+            </span>
+          )}
+        </label>
+
         <p className="premium-note">
           Pago seguro con Stripe. Cancela cuando quieras desde tu cuenta.
         </p>
@@ -43,7 +111,7 @@ export default function PremiumModal() {
           <button
             className="modal-btn-primary"
             onClick={handleCheckout}
-            disabled={proBusy}
+            disabled={proBusy || referralValid === false}
           >
             {proBusy ? 'Redirigiendo...' : (user ? 'Pagar con Stripe' : 'Entrar y pagar')}
           </button>

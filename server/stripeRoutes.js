@@ -6,6 +6,8 @@ import {
   upsertSubscriptionRow,
   isActiveProStatus,
   isSupabaseAdminConfigured,
+  getAffiliateByCode,
+  normalizeAffiliateCode,
 } from './supabaseAdmin.js';
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY?.trim();
@@ -119,6 +121,34 @@ async function getOrCreateCustomer(user) {
   return customer.id;
 }
 
+async function resolveAffiliateCode(raw) {
+  const code = normalizeAffiliateCode(raw);
+  if (!code) return null;
+  const affiliate = await getAffiliateByCode(code);
+  return affiliate ? affiliate.code : null;
+}
+
+export async function handleValidateReferralCode(req, res) {
+  if (!isSupabaseAdminConfigured) {
+    return res.status(503).json({ valid: false, message: 'Referidos no disponibles.' });
+  }
+
+  try {
+    const affiliate = await getAffiliateByCode(req.params.code);
+    if (!affiliate) {
+      return res.json({ valid: false, message: 'Código no válido o inactivo.' });
+    }
+    return res.json({
+      valid: true,
+      code: affiliate.code,
+      displayName: affiliate.display_name,
+    });
+  } catch (err) {
+    console.error('Validate referral error:', err);
+    return res.status(500).json({ valid: false, message: err.message });
+  }
+}
+
 export async function handleCreateCheckoutSession(req, res) {
   if (!stripe) return stripeUnavailable(res);
   if (!isSupabaseAdminConfigured) {
@@ -129,7 +159,20 @@ export async function handleCreateCheckoutSession(req, res) {
   }
 
   try {
+    const affiliateCode = await resolveAffiliateCode(req.body?.affiliateCode);
+    if (req.body?.affiliateCode?.trim() && !affiliateCode) {
+      return res.status(400).json({
+        error: 'INVALID_REFERRAL',
+        message: 'El código de creador no es válido. Compruébalo o déjalo vacío.',
+      });
+    }
+
     const customerId = await getOrCreateCustomer(req.user);
+    const sessionMeta = {
+      supabase_user_id: req.user.id,
+      ...(affiliateCode ? { affiliate_code: affiliateCode } : {}),
+    };
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: customerId,
@@ -137,9 +180,9 @@ export async function handleCreateCheckoutSession(req, res) {
       success_url: `${appUrl}/?pro=success`,
       cancel_url: `${appUrl}/?pro=cancelled`,
       client_reference_id: req.user.id,
-      metadata: { supabase_user_id: req.user.id },
+      metadata: sessionMeta,
       subscription_data: {
-        metadata: { supabase_user_id: req.user.id },
+        metadata: sessionMeta,
       },
       allow_promotion_codes: true,
     });
@@ -201,6 +244,7 @@ async function applySubscriptionUpdate({
   subscriptionId,
   status,
   periodEnd,
+  affiliateCode,
 }) {
   if (!userId) return;
 
@@ -210,6 +254,7 @@ async function applySubscriptionUpdate({
     subscriptionId,
     status,
     periodEnd: toPeriodEndIso(periodEnd) ?? null,
+    affiliateCode,
   });
 }
 
@@ -236,6 +281,7 @@ export async function handleStripeWebhook(req, res) {
       case 'checkout.session.completed': {
         const session = event.data.object;
         const userId = session.metadata?.supabase_user_id || session.client_reference_id;
+        const affiliateCode = session.metadata?.affiliate_code || null;
         const subscriptionId = typeof session.subscription === 'string'
           ? session.subscription
           : session.subscription?.id;
@@ -255,8 +301,9 @@ export async function handleStripeWebhook(req, res) {
           subscriptionId,
           status,
           periodEnd,
+          affiliateCode,
         });
-        console.log(`✓ Webhook checkout completado para usuario ${userId}`);
+        console.log(`✓ Webhook checkout completado para usuario ${userId}${affiliateCode ? ` (ref: ${affiliateCode})` : ''}`);
         break;
       }
 
@@ -276,6 +323,7 @@ export async function handleStripeWebhook(req, res) {
           subscriptionId: sub.id,
           status: sub.status,
           periodEnd: sub.current_period_end ?? sub.items?.data?.[0]?.current_period_end,
+          affiliateCode: sub.metadata?.affiliate_code || null,
         });
         console.log(`✓ Webhook suscripción ${sub.status} para usuario ${userId}`);
         break;

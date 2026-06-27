@@ -24,11 +24,16 @@ export async function fetchSubscriptionStatus() {
   return data;
 }
 
-export async function createCheckoutSession() {
+export async function createCheckoutSession(affiliateCode = '') {
   const headers = await authHeaders();
+  const body = {};
+  const code = String(affiliateCode || '').trim();
+  if (code) body.affiliateCode = code;
+
   const res = await fetch(apiUrl('/api/stripe/create-checkout-session'), {
     method: 'POST',
     headers,
+    body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {

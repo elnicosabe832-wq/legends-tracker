@@ -10,6 +10,7 @@ import {
   handleCreatePortalSession,
   handleStripeWebhook,
   handleSubscriptionStatus,
+  handleValidateReferralCode,
   requireAuth,
   isStripeConfigured,
 } from './stripeRoutes.js';
@@ -75,6 +76,8 @@ app.get('/api/health', (_req, res) => {
     supabaseAdmin: isSupabaseAdminConfigured,
   });
 });
+
+app.get('/api/referrals/validate/:code', handleValidateReferralCode);
 
 app.get('/api/stripe/status', requireAuth, handleSubscriptionStatus);
 app.post('/api/stripe/create-checkout-session', requireAuth, handleCreateCheckoutSession);
