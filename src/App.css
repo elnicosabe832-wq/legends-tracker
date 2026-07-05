@@ -2768,4 +2768,313 @@
       color: var(--neon-green);
       font-weight: 700;
     }
+
+    /* ── Active squad / retire ── */
+    .active-squad-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .active-squad-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .active-squad-head h3 {
+      margin: 0;
+      color: var(--electric-blue);
+      font-size: 1rem;
+    }
+
+    .active-squad-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .active-squad-hint {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .active-squad-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .active-squad-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .active-squad-player strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .active-squad-player span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .active-squad-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .squad-retire-btn {
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--gold);
+      border-radius: 6px;
+      background: rgba(255, 215, 0, 0.08);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .squad-retire-btn:hover {
+      background: rgba(255, 215, 0, 0.15);
+    }
+
+    .squad-menu-btn {
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .squad-menu-wrap {
+      position: relative;
+    }
+
+    .squad-menu-dropdown {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 0.25rem;
+      min-width: 12rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      z-index: 50;
+      overflow: hidden;
+    }
+
+    .squad-menu-dropdown button {
+      display: block;
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 0.8rem;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .squad-menu-dropdown button:hover {
+      background: rgba(255, 215, 0, 0.1);
+      color: var(--gold);
+    }
+
+    .active-squad-pro-note {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .modal.retire-modal {
+      border-color: var(--gold);
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .modal.retire-modal h2 {
+      color: var(--gold);
+      font-size: 1.2rem;
+    }
+
+    .retire-modal-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .retire-modal-text {
+      font-size: 0.95rem !important;
+      margin-bottom: 0.75rem !important;
+    }
+
+    .retire-modal-sub {
+      font-size: 0.85rem !important;
+      color: var(--text-muted) !important;
+      line-height: 1.5;
+      margin-bottom: 1.25rem !important;
+    }
+
+    /* ── Challenges ── */
+    .retos-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .retos-header h2 {
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+    }
+
+    .retos-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      max-width: 36rem;
+      margin: 0 auto;
+    }
+
+    .challenges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .challenge-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      transition: border-color 0.2s;
+    }
+
+    .challenge-card.active {
+      border-color: var(--neon-green-dim);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.08);
+    }
+
+    .challenge-card.completed {
+      border-color: var(--gold-dim);
+      opacity: 0.9;
+    }
+
+    .challenge-card-top {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .challenge-difficulty {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .challenge-diff-easy {
+      background: rgba(0, 255, 136, 0.15);
+      color: var(--neon-green);
+    }
+
+    .challenge-diff-medium {
+      background: rgba(0, 212, 255, 0.15);
+      color: var(--electric-blue);
+    }
+
+    .challenge-diff-legend {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--gold);
+    }
+
+    .challenge-pro-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(255, 215, 0, 0.2);
+      color: var(--gold);
+    }
+
+    .challenge-card h3 {
+      font-size: 1.05rem;
+      margin: 0;
+    }
+
+    .challenge-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .challenge-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .challenge-progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .challenge-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon-green-dim), var(--electric-blue));
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .challenge-activate-btn {
+      margin-top: 0.5rem;
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--neon-green);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .challenge-activate-btn.active {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    .challenge-activate-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   

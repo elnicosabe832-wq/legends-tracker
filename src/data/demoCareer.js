@@ -64,6 +64,8 @@ export function buildDemoCareer() {
     hallOfFame: [
       {
         id: 'hof-demo-yeray',
+        status: 'retired',
+        isLegend: true,
         enshrinedAt: '2025-06-01T12:00:00.000Z',
         reason: 'Retirada / leyenda defensiva',
         badges: ['🛡️ Muro del club', '100+ partidos'],
@@ -78,5 +80,15 @@ export function buildDemoCareer() {
         },
       },
     ],
+    challenges: {
+      active: [
+        {
+          challengeId: 'goleador-30',
+          progress: 28,
+          status: 'active',
+          activatedAt: '2025-05-01T12:00:00.000Z',
+        },
+      ],
+    },
   };
 }

@@ -13,6 +13,7 @@ import Analytics from './components/Analytics';
 import CargaPage from './pages/CargaPage';
 import PeriodicoPage from './pages/PeriodicoPage';
 import MuroPage from './pages/MuroPage';
+import RetosPage from './pages/RetosPage';
 import PrivacidadPage from './pages/PrivacidadPage';
 import ComoFuncionaPage from './pages/ComoFuncionaPage';
 import CompartirPage from './pages/CompartirPage';
@@ -35,6 +36,7 @@ function AppRoutes() {
           <Route path="/" element={<CargaPage />} />
           <Route path="/periodico" element={<PeriodicoPage />} />
           <Route path="/muro" element={<MuroPage />} />
+          <Route path="/retos" element={<RetosPage />} />
           <Route path="/como-funciona" element={<ComoFuncionaPage />} />
           <Route path="/compartir" element={<CompartirPage />} />
           <Route path="/privacidad" element={<PrivacidadPage />} />

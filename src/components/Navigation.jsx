@@ -4,6 +4,7 @@ const tabs = [
   { to: '/', label: '📤 Carga', end: true },
   { to: '/periodico', label: '📰 El Periódico' },
   { to: '/muro', label: '🏆 Muro de Leyendas' },
+  { to: '/retos', label: '🎯 Retos' },
 ];
 
 export default function Navigation() {

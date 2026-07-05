@@ -31,6 +31,7 @@ import {
 import { buildDemoCareer, DEMO_CAREER_ID } from '../data/demoCareer';
 
 import { buildEnshrinementSnapshot } from '../utils/hallOfFameUtils';
+import { getChallengeById, FREE_ACTIVE_CHALLENGE_LIMIT } from '../data/challenges';
 
 
 
@@ -79,6 +80,8 @@ function loadLocalState() {
           seasons: normalizeSeasonLabels(career.seasons),
 
           hallOfFame: career.hallOfFame || [],
+
+          challenges: career.challenges || { active: [] },
 
         };
 
@@ -688,6 +691,8 @@ export function AppProvider({ children }) {
 
       hallOfFame: [],
 
+      challenges: { active: [] },
+
     };
 
     setState((s) => ({
@@ -1022,7 +1027,7 @@ export function AppProvider({ children }) {
 
 
 
-  const enshrinePlayer = useCallback((careerId, playerName) => {
+  const addPlayerToHallOfFame = useCallback((careerId, playerName, { removeFromActiveSquad }) => {
 
     if (!state.isPro) {
 
@@ -1038,25 +1043,55 @@ export function AppProvider({ children }) {
 
     setState((s) => {
 
-      const career = s.userCareers[careerId];
+      const c = s.userCareers[careerId];
 
-      if (!career) return s;
+      if (!c) return s;
 
-      const hallOfFame = [...(career.hallOfFame || [])];
+      const hallOfFame = [...(c.hallOfFame || [])];
 
       if (hallOfFame.some((h) => h.snapshot.name === playerName)) return s;
+
+      let seasons = c.seasons || [];
+
+      if (removeFromActiveSquad && seasons.length) {
+
+        const lastIdx = seasons.length - 1;
+
+        const updated = seasons.map((season, i) =>
+
+          (i === lastIdx
+
+            ? {
+
+              ...season,
+
+              players: (season.players || []).filter((p) => p.name !== playerName),
+
+            }
+
+            : season),
+
+        );
+
+        seasons = normalizeSeasonLabels(updated);
+
+      }
 
       hallOfFame.push({
 
         id: `hof-${Date.now()}`,
 
+        status: 'retired',
+
+        isLegend: true,
+
         enshrinedAt: new Date().toISOString(),
 
-        reason: 'Leyenda del club',
+        reason: removeFromActiveSquad ? 'Retirado desde plantilla activa' : 'Leyenda del club',
 
         badges: data.badges,
 
-        snapshot: data.snapshot,
+        snapshot: { ...data.snapshot },
 
       });
 
@@ -1068,7 +1103,7 @@ export function AppProvider({ children }) {
 
           ...s.userCareers,
 
-          [careerId]: { ...career, hallOfFame },
+          [careerId]: { ...c, hallOfFame, seasons },
 
         },
 
@@ -1076,7 +1111,127 @@ export function AppProvider({ children }) {
 
     });
 
-  }, [state.isPro]);
+  }, [state.isPro, state.userCareers]);
+
+
+
+  const enshrinePlayer = useCallback((careerId, playerName) => {
+
+    addPlayerToHallOfFame(careerId, playerName, { removeFromActiveSquad: false });
+
+  }, [addPlayerToHallOfFame]);
+
+
+
+  const retirePlayerToHallOfFame = useCallback((careerId, playerName) => {
+
+    addPlayerToHallOfFame(careerId, playerName, { removeFromActiveSquad: true });
+
+  }, [addPlayerToHallOfFame]);
+
+
+
+  const activateChallenge = useCallback((careerId, challengeId) => {
+
+    const catalog = getChallengeById(challengeId);
+
+    if (!catalog) return;
+
+    if (catalog.proOnly && !state.isPro) {
+
+      setShowPremiumModal(true);
+
+      return;
+
+    }
+
+    const career = state.userCareers[careerId];
+
+    const active = career?.challenges?.active || [];
+
+    if (active.some((a) => a.challengeId === challengeId)) return;
+
+    if (!state.isPro && active.length >= FREE_ACTIVE_CHALLENGE_LIMIT) {
+
+      setShowPremiumModal(true);
+
+      return;
+
+    }
+
+    setState((s) => {
+
+      const c = s.userCareers[careerId];
+
+      if (!c) return s;
+
+      const list = [...(c.challenges?.active || [])];
+
+      list.push({
+
+        challengeId,
+
+        progress: 0,
+
+        status: 'active',
+
+        activatedAt: new Date().toISOString(),
+
+      });
+
+      return {
+
+        ...s,
+
+        userCareers: {
+
+          ...s.userCareers,
+
+          [careerId]: { ...c, challenges: { active: list } },
+
+        },
+
+      };
+
+    });
+
+  }, [state.isPro, state.userCareers]);
+
+
+
+  const deactivateChallenge = useCallback((careerId, challengeId) => {
+
+    setState((s) => {
+
+      const c = s.userCareers[careerId];
+
+      if (!c) return s;
+
+      const list = (c.challenges?.active || []).filter((a) => a.challengeId !== challengeId);
+
+      return {
+
+        ...s,
+
+        userCareers: {
+
+          ...s.userCareers,
+
+          [careerId]: { ...c, challenges: { active: list } },
+
+        },
+
+      };
+
+    });
+
+  }, []);
+
+
+
+  const canActivateMoreChallenges = state.isPro
+
+    || ((career?.challenges?.active?.length || 0) < FREE_ACTIVE_CHALLENGE_LIMIT);
 
 
 
@@ -1209,6 +1364,14 @@ export function AppProvider({ children }) {
         exitDemoCareer,
 
         enshrinePlayer,
+
+        retirePlayerToHallOfFame,
+
+        activateChallenge,
+
+        deactivateChallenge,
+
+        canActivateMoreChallenges,
 
       }}
 

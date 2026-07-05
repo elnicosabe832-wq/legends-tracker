@@ -11,6 +11,7 @@ const PRO_BENEFITS = [
   'Carreras ilimitadas',
   'Historia Real — compara con récords del club',
   'Salón de la Fama — inmortaliza leyendas',
+  'Retos de carrera — reglas especiales para tu save',
   'Gráficos de evolución completos (15 temporadas)',
   'Exportar crónicas premium para redes',
 ];

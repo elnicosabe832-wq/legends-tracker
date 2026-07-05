@@ -8,6 +8,7 @@ import RealLifeCompare from '../components/RealLifeCompare';
 import EvolutionPanel from '../components/EvolutionPanel';
 import PlayerPerformanceChart from '../components/PlayerPerformanceChart';
 import HallOfFamePanel from '../components/HallOfFamePanel';
+import ActiveSquadPanel from '../components/ActiveSquadPanel';
 import { getSeasonData, buildRankings, getPlayerMovers } from '../utils/seasonUtils';
 import { countLicensedClubs } from '../data/eaFcDatabase';
 import { getClubRecords, countClubsWithRecords } from '../data/clubRecords';
@@ -138,6 +139,11 @@ export default function MuroPage() {
       {muroTab === 'rankings' && (
         <>
           <SeasonTabs />
+
+          <ActiveSquadPanel
+            career={career}
+            onRetired={() => setMuroTab('salon')}
+          />
 
           {showEvolution && (
             <>

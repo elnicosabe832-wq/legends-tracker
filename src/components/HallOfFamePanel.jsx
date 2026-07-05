@@ -14,7 +14,8 @@ export default function HallOfFamePanel({ career }) {
       <div className="hof-intro">
         <h3>👑 Salón de la Fama</h3>
         <p>
-          Inmortaliza a jugadores vendidos o retirados. Su ficha queda congelada en su mejor momento del club.
+          Inmortaliza a jugadores vendidos o retirados desde la plantilla activa.
+          Su ficha queda congelada con las estadísticas totales del club.
         </p>
       </div>
 
