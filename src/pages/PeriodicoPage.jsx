@@ -3,6 +3,7 @@ import CareerSelector from '../components/CareerSelector';
 import EmptyCareerState from '../components/EmptyCareerState';
 import SeasonTabs from '../components/SeasonTabs';
 import EvolutionPanel from '../components/EvolutionPanel';
+import PremiumChronicle from '../components/PremiumChronicle';
 import { getSeasonData } from '../utils/seasonUtils';
 
 export default function PeriodicoPage() {
@@ -78,6 +79,13 @@ export default function PeriodicoPage() {
           <EvolutionPanel insights={chronicle.insights} />
         )}
       </div>
+
+      <PremiumChronicle
+        chronicle={chronicle}
+        careerName={career.name}
+        seasonLabel={seasonData.label}
+        seasonCount={career.seasons.length}
+      />
     </div>
   );
 }

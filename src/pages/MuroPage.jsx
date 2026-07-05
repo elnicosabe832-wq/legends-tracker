@@ -6,6 +6,8 @@ import SeasonTabs from '../components/SeasonTabs';
 import ClubSelector from '../components/ClubSelector';
 import RealLifeCompare from '../components/RealLifeCompare';
 import EvolutionPanel from '../components/EvolutionPanel';
+import PlayerPerformanceChart from '../components/PlayerPerformanceChart';
+import HallOfFamePanel from '../components/HallOfFamePanel';
 import { getSeasonData, buildRankings, getPlayerMovers } from '../utils/seasonUtils';
 import { countLicensedClubs } from '../data/eaFcDatabase';
 import { getClubRecords, countClubsWithRecords } from '../data/clubRecords';
@@ -20,6 +22,7 @@ export default function MuroPage() {
     activeSeason,
     hasCareer,
     isPro,
+    isDemoMode,
     activeCareer,
     setShowPremiumModal,
     linkClub,
@@ -51,6 +54,14 @@ export default function MuroPage() {
   const hasRecords = career.linkedClub
     ? getClubRecords(career.linkedClub.clubId).length > 0
     : (career.realLife?.length > 0);
+
+  const openSalonTab = () => {
+    if (!isPro && !isDemoMode) {
+      setShowPremiumModal(true);
+      return;
+    }
+    setMuroTab('salon');
+  };
 
   const openHistoriaTab = () => {
     if (!isPro) {
@@ -108,6 +119,14 @@ export default function MuroPage() {
         </button>
         <button
           type="button"
+          className={`muro-tab muro-tab-pro ${muroTab === 'salon' ? 'active' : ''}`}
+          onClick={openSalonTab}
+        >
+          👑 Salón de la Fama
+          {!isPro && <span className="muro-tab-lock">PRO</span>}
+        </button>
+        <button
+          type="button"
           className={`muro-tab muro-tab-pro ${muroTab === 'historia' ? 'active' : ''}`}
           onClick={openHistoriaTab}
         >
@@ -121,11 +140,14 @@ export default function MuroPage() {
           <SeasonTabs />
 
           {showEvolution && (
-            <EvolutionPanel
-              insights={evolutionInsights}
-              movers={playerMovers}
-              showMovers
-            />
+            <>
+              <EvolutionPanel
+                insights={evolutionInsights}
+                movers={playerMovers}
+                showMovers
+              />
+              <PlayerPerformanceChart seasons={career.seasons} />
+            </>
           )}
 
           <div className="rankings-grid">
@@ -156,6 +178,10 @@ export default function MuroPage() {
             </button>
           )}
         </>
+      )}
+
+      {muroTab === 'salon' && (
+        <HallOfFamePanel career={career} />
       )}
 
       {muroTab === 'historia' && isPro && (

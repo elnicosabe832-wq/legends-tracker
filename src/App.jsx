@@ -17,6 +17,7 @@ import PrivacidadPage from './pages/PrivacidadPage';
 import ComoFuncionaPage from './pages/ComoFuncionaPage';
 import CompartirPage from './pages/CompartirPage';
 import Footer from './components/Footer';
+import DemoBanner from './components/DemoBanner';
 import './App.css';
 
 function AppRoutes() {
@@ -27,6 +28,7 @@ function AppRoutes() {
   return (
     <>
       <Header />
+      <DemoBanner />
       <Navigation />
       <main className="main">
         <Routes>

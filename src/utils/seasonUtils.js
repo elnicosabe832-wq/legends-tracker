@@ -115,7 +115,7 @@ export function generateChronicle(players, teamName) {
   };
 }
 
-function buildPlayerEvolution(seasons) {
+export function buildPlayerEvolution(seasons) {
   const map = {};
   seasons.forEach((season, idx) => {
     (season.players || []).forEach((p) => {

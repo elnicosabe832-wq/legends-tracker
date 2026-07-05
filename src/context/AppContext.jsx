@@ -28,6 +28,10 @@ import {
 
 } from '../lib/stripeApi';
 
+import { buildDemoCareer, DEMO_CAREER_ID } from '../data/demoCareer';
+
+import { buildEnshrinementSnapshot } from '../utils/hallOfFameUtils';
+
 
 
 const STORAGE_KEY = 'legends-tracker-v2';
@@ -74,6 +78,8 @@ function loadLocalState() {
 
           seasons: normalizeSeasonLabels(career.seasons),
 
+          hallOfFame: career.hallOfFame || [],
+
         };
 
       }
@@ -96,7 +102,7 @@ function loadLocalState() {
 
 function countCareers(userCareers) {
 
-  return Object.keys(userCareers).length;
+  return Object.values(userCareers || {}).filter((c) => !c.isDemo).length;
 
 }
 
@@ -410,6 +416,34 @@ export function AppProvider({ children }) {
 
 
 
+  const signInWithGoogle = useCallback(async () => {
+
+    if (!supabase) throw new Error('Supabase no configurado');
+
+    setAuthError(null);
+
+    const redirectTo = `${window.location.origin}${window.location.pathname}`;
+
+    const { error } = await supabase.auth.signInWithOAuth({
+
+      provider: 'google',
+
+      options: { redirectTo },
+
+    });
+
+    if (error) {
+
+      setAuthError(translateAuthError(error.message));
+
+      throw error;
+
+    }
+
+  }, []);
+
+
+
   const signOut = useCallback(async () => {
 
     if (!supabase) return;
@@ -596,7 +630,9 @@ export function AppProvider({ children }) {
 
   const career = state.activeCareer ? state.userCareers[state.activeCareer] : null;
 
-  const hasCareer = careerCount > 0;
+  const isDemoMode = Boolean(career?.isDemo);
+
+  const hasCareer = careerCount > 0 || isDemoMode;
 
 
 
@@ -649,6 +685,8 @@ export function AppProvider({ children }) {
       linkedClub: null,
 
       realLife: [],
+
+      hallOfFame: [],
 
     };
 
@@ -936,6 +974,112 @@ export function AppProvider({ children }) {
 
 
 
+  const loadDemoCareer = useCallback(() => {
+
+    const demo = buildDemoCareer();
+
+    setState((s) => ({
+
+      ...s,
+
+      userCareers: { ...s.userCareers, [DEMO_CAREER_ID]: demo },
+
+      activeCareer: DEMO_CAREER_ID,
+
+      activeSeason: 'total',
+
+      welcomeDismissed: true,
+
+    }));
+
+  }, []);
+
+
+
+  const exitDemoCareer = useCallback(() => {
+
+    setState((s) => {
+
+      const { [DEMO_CAREER_ID]: _removed, ...rest } = s.userCareers;
+
+      const nextId = Object.keys(rest).find((id) => !rest[id]?.isDemo) || null;
+
+      return {
+
+        ...s,
+
+        userCareers: rest,
+
+        activeCareer: nextId,
+
+        activeSeason: 'total',
+
+      };
+
+    });
+
+  }, []);
+
+
+
+  const enshrinePlayer = useCallback((careerId, playerName) => {
+
+    if (!state.isPro) {
+
+      setShowPremiumModal(true);
+
+      return;
+
+    }
+
+    const data = buildEnshrinementSnapshot(state.userCareers[careerId], playerName);
+
+    if (!data) return;
+
+    setState((s) => {
+
+      const career = s.userCareers[careerId];
+
+      if (!career) return s;
+
+      const hallOfFame = [...(career.hallOfFame || [])];
+
+      if (hallOfFame.some((h) => h.snapshot.name === playerName)) return s;
+
+      hallOfFame.push({
+
+        id: `hof-${Date.now()}`,
+
+        enshrinedAt: new Date().toISOString(),
+
+        reason: 'Leyenda del club',
+
+        badges: data.badges,
+
+        snapshot: data.snapshot,
+
+      });
+
+      return {
+
+        ...s,
+
+        userCareers: {
+
+          ...s.userCareers,
+
+          [careerId]: { ...career, hallOfFame },
+
+        },
+
+      };
+
+    });
+
+  }, [state.isPro]);
+
+
+
   const dismissWelcome = useCallback(() => {
 
     setState((s) => ({ ...s, welcomeDismissed: true }));
@@ -972,6 +1116,8 @@ export function AppProvider({ children }) {
 
         hasCareer,
 
+        isDemoMode,
+
         careerCount,
 
         user,
@@ -991,6 +1137,8 @@ export function AppProvider({ children }) {
         signIn,
 
         signUp,
+
+        signInWithGoogle,
 
         signOut,
 
@@ -1055,6 +1203,12 @@ export function AppProvider({ children }) {
         linkClub,
 
         unlinkClub,
+
+        loadDemoCareer,
+
+        exitDemoCareer,
+
+        enshrinePlayer,
 
       }}
 

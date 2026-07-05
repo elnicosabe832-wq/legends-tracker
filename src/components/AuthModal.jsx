@@ -7,6 +7,7 @@ export default function AuthModal() {
     setShowAuthModal,
     signIn,
     signUp,
+    signInWithGoogle,
     authError,
     clearAuthError,
     isSupabaseConfigured,
@@ -29,6 +30,17 @@ export default function AuthModal() {
   const switchMode = (next) => {
     setMode(next);
     clearAuthError();
+  };
+
+  const handleGoogle = async () => {
+    setBusy(true);
+    clearAuthError();
+    try {
+      await signInWithGoogle();
+      /* redirige a Google; no cerrar modal aquí */
+    } catch {
+      setBusy(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -95,6 +107,21 @@ export default function AuthModal() {
             Registro
           </button>
         </div>
+
+        {isSupabaseConfigured && !supabaseConnectionError && (
+          <>
+            <button
+              type="button"
+              className="auth-google-btn"
+              onClick={handleGoogle}
+              disabled={busy}
+            >
+              <span className="auth-google-icon" aria-hidden="true">G</span>
+              Continuar con Google
+            </button>
+            <p className="auth-divider"><span>o con email</span></p>
+          </>
+        )}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>

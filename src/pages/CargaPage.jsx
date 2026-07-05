@@ -22,6 +22,7 @@ export default function CargaPage() {
   const navigate = useNavigate();
   const {
     welcomeDismissed,
+    isDemoMode,
     dismissWelcome,
     hasCareer,
     career,
@@ -117,7 +118,13 @@ export default function CargaPage() {
     <div className="page">
       {!hasCareer && <LandingHero />}
 
-      {!welcomeDismissed && hasCareer && (
+      {isDemoMode && (
+        <p className="demo-carga-hint">
+          Modo demo: explora El Periódico y el Muro. Para procesar tus capturas, sal del demo y crea tu carrera.
+        </p>
+      )}
+
+      {!welcomeDismissed && hasCareer && !isDemoMode && (
         <div className="welcome-banner">
           <div>
             <h3>👋 ¡Bienvenido a Legends Tracker!</h3>
@@ -134,6 +141,16 @@ export default function CargaPage() {
 
       {!hasCareer ? (
         <EmptyCareerState />
+      ) : isDemoMode ? (
+        <div className="demo-carga-cta">
+          <p>La carrera de ejemplo ya tiene 5 temporadas cargadas.</p>
+          <button type="button" className="landing-link-btn" onClick={() => navigate('/periodico')}>
+            Ver El Periódico
+          </button>
+          <button type="button" className="landing-link-btn" onClick={() => navigate('/muro')}>
+            Ver Muro de Leyendas
+          </button>
+        </div>
       ) : (
         <>
           {!hasSeasons ? (

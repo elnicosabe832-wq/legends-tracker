@@ -12,9 +12,11 @@ const defaultState = {
 export function prepareStateForSave(state) {
   const userCareers = {};
   for (const [id, career] of Object.entries(state.userCareers || {})) {
+    if (career.isDemo) continue;
     userCareers[id] = {
       ...career,
       seasons: normalizeSeasonLabels(career.seasons),
+      hallOfFame: career.hallOfFame || [],
     };
   }
   return {

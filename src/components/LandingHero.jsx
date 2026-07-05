@@ -8,7 +8,7 @@ const STEPS = [
 ];
 
 export default function LandingHero() {
-  const { openCreateCareer } = useApp();
+  const { openCreateCareer, loadDemoCareer } = useApp();
 
   return (
     <section className="landing-hero" aria-label="Presentación">
@@ -34,6 +34,9 @@ export default function LandingHero() {
       <div className="landing-cta">
         <button type="button" className="create-career-btn" onClick={openCreateCareer}>
           Empezar gratis
+        </button>
+        <button type="button" className="landing-demo-btn" onClick={loadDemoCareer}>
+          Ver carrera de ejemplo
         </button>
         <Link to="/como-funciona" className="landing-link-btn">
           Cómo funciona

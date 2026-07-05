@@ -7,6 +7,14 @@ import {
 } from '../lib/referrals';
 import { validateReferralCode } from '../lib/referralApi';
 
+const PRO_BENEFITS = [
+  'Carreras ilimitadas',
+  'Historia Real — compara con récords del club',
+  'Salón de la Fama — inmortaliza leyendas',
+  'Gráficos de evolución completos (15 temporadas)',
+  'Exportar crónicas premium para redes',
+];
+
 export default function PremiumModal() {
   const {
     showPremiumModal,
@@ -70,15 +78,20 @@ export default function PremiumModal() {
 
   return (
     <div className="modal-overlay visible" onClick={() => setShowPremiumModal(false)}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal premium-modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={() => setShowPremiumModal(false)}>✕</button>
         <div className="crown">👑</div>
-        <h2>¡Pásate a Pro!</h2>
-        <p>
-          Desbloquea <strong>carreras ilimitadas</strong> y la pestaña{' '}
-          <strong>Historia Real</strong> del Muro de Leyendas: elige país, liga y club de EA FC
-          y compara tus récords con la historia del equipo.
+        <h2>No dejes que tu historia se borre</h2>
+        <p className="premium-modal-lead">
+          Convierte tu Modo Carrera en una <strong>leyenda eterna</strong> por menos de un café al mes.
         </p>
+
+        <ul className="premium-benefits">
+          {PRO_BENEFITS.map((b) => (
+            <li key={b}>{b}</li>
+          ))}
+        </ul>
+
         <div className="price">1,99€<span>/mes</span></div>
 
         <label className="referral-field">
@@ -113,7 +126,7 @@ export default function PremiumModal() {
             onClick={handleCheckout}
             disabled={proBusy || referralValid === false}
           >
-            {proBusy ? 'Redirigiendo...' : (user ? 'Pagar con Stripe' : 'Entrar y pagar')}
+            {proBusy ? 'Redirigiendo...' : (user ? 'Hacerse Pro' : 'Entrar y hacerse Pro')}
           </button>
           <button className="modal-btn-secondary" onClick={() => setShowPremiumModal(false)}>
             Ahora no

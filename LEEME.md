@@ -27,12 +27,13 @@ Opcional pero recomendado si quieres entrar con email y sincronizar carreras ent
 1. Crea un proyecto gratis en [supabase.com](https://supabase.com/dashboard)
 2. En **SQL Editor**, pega y ejecuta el contenido de `supabase/schema.sql` (tabla `user_saves` + permisos)
 3. En **Authentication → Providers**, deja **Email** activado
-4. (Recomendado para pruebas) En **Authentication → Settings**, desactiva **Confirm email** para entrar sin confirmar el correo
-5. En **Settings → API**, copia:
+4. **Google (opcional):** en **Authentication → Providers → Google** actívalo. Necesitas un proyecto en [Google Cloud Console](https://console.cloud.google.com/) → **APIs & Services → Credentials → OAuth client** (tipo Web). En **Authorized redirect URIs** añade la URL que muestra Supabase (tipo `https://TU_PROYECTO.supabase.co/auth/v1/callback`). Copia Client ID y Client Secret en Supabase. En **Authentication → URL Configuration → Redirect URLs** añade `http://localhost:5173` y tu URL de Vercel (ej. `https://legends-tracker-five.vercel.app`).
+5. (Recomendado para pruebas) En **Authentication → Settings**, desactiva **Confirm email** para entrar sin confirmar el correo
+6. En **Settings → API**, copia:
    - **Project URL** → `VITE_SUPABASE_URL`
    - **Publishable key** (pestaña *API Keys*) → `VITE_SUPABASE_PUBLISHABLE_KEY`
    - Si no hay publishable: pestaña *Legacy API Keys* → **anon public** → `VITE_SUPABASE_ANON_KEY`
-6. Añádelas a tu `.env` (junto a OpenAI). Cada línea debe ser `NOMBRE=valor`:
+7. Añádelas a tu `.env` (junto a OpenAI). Cada línea debe ser `NOMBRE=valor`:
 
 ```
 VITE_SUPABASE_URL=https://xxxxx.supabase.co
