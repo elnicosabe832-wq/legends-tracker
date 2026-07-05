@@ -10,6 +10,8 @@ export default function Footer() {
       <p className="site-footer-links">
         <Link to="/como-funciona">Cómo funciona</Link>
         <span aria-hidden="true"> · </span>
+        <Link to="/retos">Retos</Link>
+        <span aria-hidden="true"> · </span>
         <Link to="/compartir">Compartir</Link>
         <span aria-hidden="true"> · </span>
         <Link to="/privacidad">Privacidad</Link>

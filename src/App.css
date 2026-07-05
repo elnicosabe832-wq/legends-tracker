@@ -3077,4 +3077,82 @@
       opacity: 0.5;
       cursor: not-allowed;
     }
+
+    .challenge-done-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      background: rgba(0, 255, 136, 0.2);
+      color: var(--neon-green);
+    }
+
+    .challenge-progress-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .challenge-progress-btn {
+      flex: 1;
+      min-width: 7rem;
+      padding: 0.45rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: rgba(0, 255, 136, 0.08);
+      color: var(--neon-green);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .challenge-progress-btn.complete {
+      background: rgba(255, 215, 0, 0.1);
+      color: var(--gold);
+      border-color: rgba(255, 215, 0, 0.3);
+    }
+
+    .retos-active-summary {
+      text-align: center;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      background: rgba(0, 255, 136, 0.08);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .retos-active-summary strong {
+      color: var(--neon-green);
+    }
+
+    .hof-card-status {
+      display: inline-block;
+      margin-left: 0.5rem;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      vertical-align: middle;
+    }
+
+    .active-squad-empty {
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .chart-loading {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      padding: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav-tab {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.72rem;
+      }
+    }
   

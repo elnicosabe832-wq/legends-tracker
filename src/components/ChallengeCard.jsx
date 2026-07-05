@@ -11,6 +11,8 @@ export default function ChallengeCard({
   canActivate,
   onActivate,
   onDeactivate,
+  onIncrement,
+  onComplete,
   locked,
   onUnlock,
 }) {
@@ -39,6 +41,7 @@ export default function ChallengeCard({
           {challenge.difficulty}
         </span>
         {challenge.proOnly && <span className="challenge-pro-badge">PRO</span>}
+        {completed && <span className="challenge-done-badge">✓ Cumplido</span>}
       </div>
       <h3>{challenge.title}</h3>
       <p className="challenge-desc">{challenge.description}</p>
@@ -52,6 +55,17 @@ export default function ChallengeCard({
           <div className="challenge-progress-fill" style={{ width: `${pct}%` }} />
         </div>
       </div>
+
+      {isActive && !completed && (
+        <div className="challenge-progress-actions">
+          <button type="button" className="challenge-progress-btn" onClick={() => onIncrement?.(1)}>
+            +1 progreso
+          </button>
+          <button type="button" className="challenge-progress-btn complete" onClick={onComplete}>
+            Marcar cumplido
+          </button>
+        </div>
+      )}
 
       <button
         type="button"

@@ -2,7 +2,7 @@ import { useApp } from '../context/AppContext';
 import CareerSelector from '../components/CareerSelector';
 import EmptyCareerState from '../components/EmptyCareerState';
 import ChallengeCard from '../components/ChallengeCard';
-import { CHALLENGE_CATALOG } from '../data/challenges';
+import { CHALLENGE_CATALOG, getChallengeById } from '../data/challenges';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function RetosPage() {
@@ -20,6 +20,8 @@ export default function RetosPage() {
     setShowPremiumModal,
     activateChallenge,
     deactivateChallenge,
+    incrementChallengeProgress,
+    updateChallengeProgress,
     canActivateMoreChallenges,
   } = useApp();
 
@@ -37,6 +39,7 @@ export default function RetosPage() {
 
   const activeList = career.challenges?.active || [];
   const activeIds = new Set(activeList.map((a) => a.challengeId));
+  const completedCount = activeList.filter((a) => a.status === 'completed').length;
 
   return (
     <div className="page">
@@ -45,10 +48,19 @@ export default function RetosPage() {
       <div className="retos-header">
         <h2><span className="green">Retos</span> de <span className="blue">Carrera</span></h2>
         <p>
-          {career.name} — Activa reglas especiales para tu save y marca el progreso manualmente.
+          {career.name} — Activa reglas especiales y marca el progreso a mano tras cada temporada.
           {!isPro && ' Plan gratis: 1 reto activo.'}
         </p>
       </div>
+
+      {activeList.length > 0 && (
+        <div className="retos-active-summary">
+          <strong>{activeList.length} reto{activeList.length !== 1 ? 's' : ''} activo{activeList.length !== 1 ? 's' : ''}</strong>
+          {completedCount > 0 && (
+            <span> · {completedCount} cumplido{completedCount !== 1 ? 's' : ''}</span>
+          )}
+        </div>
+      )}
 
       <div className="challenges-grid">
         {CHALLENGE_CATALOG.map((ch) => {
@@ -68,6 +80,11 @@ export default function RetosPage() {
               onUnlock={() => setShowPremiumModal(true)}
               onActivate={() => activateChallenge(activeCareer, ch.id)}
               onDeactivate={() => deactivateChallenge(activeCareer, ch.id)}
+              onIncrement={(delta) => incrementChallengeProgress(activeCareer, ch.id, delta)}
+              onComplete={() => {
+                const c = getChallengeById(ch.id);
+                if (c) updateChallengeProgress(activeCareer, ch.id, c.maxProgress);
+              }}
             />
           );
         })}

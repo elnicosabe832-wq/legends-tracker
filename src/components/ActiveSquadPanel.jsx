@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { aggregatePlayers } from '../utils/seasonUtils';
 import RetireToHallModal from './RetireToHallModal';
@@ -14,6 +14,20 @@ export default function ActiveSquadPanel({ career, onRetired }) {
 
   const [menuOpen, setMenuOpen] = useState(null);
   const [pendingRetire, setPendingRetire] = useState(null);
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const close = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setMenuOpen(null);
+      }
+    };
+
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [menuOpen]);
 
   const seasons = career.seasons || [];
   if (!seasons.length) return null;
@@ -30,7 +44,15 @@ export default function ActiveSquadPanel({ career, onRetired }) {
     })
     .sort((a, b) => b.goals - a.goals);
 
-  if (!squadPlayers.length) return null;
+  if (!squadPlayers.length) {
+    return (
+      <section className="active-squad-panel active-squad-empty">
+        <p className="active-squad-hint">
+          No hay jugadores en la plantilla actual o ya están todos en el Salón de la Fama.
+        </p>
+      </section>
+    );
+  }
 
   const handleRetireClick = (player) => {
     setMenuOpen(null);
@@ -50,7 +72,7 @@ export default function ActiveSquadPanel({ career, onRetired }) {
   };
 
   return (
-    <section className="active-squad-panel">
+    <section className="active-squad-panel" ref={panelRef}>
       <div className="active-squad-head">
         <h3>👕 Plantilla activa</h3>
         <span className="active-squad-meta">{latestSeason.label} · {squadPlayers.length} jugadores</span>
@@ -80,7 +102,11 @@ export default function ActiveSquadPanel({ career, onRetired }) {
                   type="button"
                   className="squad-menu-btn"
                   aria-label="Opciones"
-                  onClick={() => setMenuOpen(menuOpen === p.name ? null : p.name)}
+                  aria-expanded={menuOpen === p.name}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuOpen(menuOpen === p.name ? null : p.name);
+                  }}
                 >
                   ⋯
                 </button>
@@ -98,7 +124,7 @@ export default function ActiveSquadPanel({ career, onRetired }) {
       </ul>
 
       {!isPro && !isDemoMode && (
-        <p className="active-squad-pro-note">Función Pro — prueba en la carrera de ejemplo o hazte Pro.</p>
+        <p className="active-squad-pro-note">Función Pro — hazte Pro para inmortalizar jugadores.</p>
       )}
 
       <RetireToHallModal

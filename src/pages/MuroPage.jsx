@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useApp } from '../context/AppContext';
 import CareerSelector from '../components/CareerSelector';
 import EmptyCareerState from '../components/EmptyCareerState';
@@ -6,12 +6,13 @@ import SeasonTabs from '../components/SeasonTabs';
 import ClubSelector from '../components/ClubSelector';
 import RealLifeCompare from '../components/RealLifeCompare';
 import EvolutionPanel from '../components/EvolutionPanel';
-import PlayerPerformanceChart from '../components/PlayerPerformanceChart';
 import HallOfFamePanel from '../components/HallOfFamePanel';
 import ActiveSquadPanel from '../components/ActiveSquadPanel';
 import { getSeasonData, buildRankings, getPlayerMovers } from '../utils/seasonUtils';
 import { countLicensedClubs } from '../data/eaFcDatabase';
 import { getClubRecords, countClubsWithRecords } from '../data/clubRecords';
+
+const PlayerPerformanceChart = lazy(() => import('../components/PlayerPerformanceChart'));
 
 const POS_CLASS = ['gold', 'silver', 'bronze', 'normal'];
 const LICENSED_COUNT = countLicensedClubs();
@@ -152,7 +153,9 @@ export default function MuroPage() {
                 movers={playerMovers}
                 showMovers
               />
-              <PlayerPerformanceChart seasons={career.seasons} />
+              <Suspense fallback={<p className="chart-loading">Cargando gráficos…</p>}>
+                <PlayerPerformanceChart seasons={career.seasons} />
+              </Suspense>
             </>
           )}
 

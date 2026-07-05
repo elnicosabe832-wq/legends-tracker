@@ -24,7 +24,10 @@ export default function HallOfFamePanel({ career }) {
           {hall.map((entry) => (
             <article key={entry.id} className="hof-card">
               <div className="hof-card-shine" aria-hidden="true" />
-              <span className="hof-card-badge">ICON</span>
+              <span className="hof-card-badge">{entry.isLegend ? 'LEGEND' : 'ICON'}</span>
+              {entry.status === 'retired' && (
+                <span className="hof-card-status">Retirado</span>
+              )}
               <h4>{entry.snapshot.name}</h4>
               <p className="hof-card-pos">{entry.snapshot.pos}</p>
               <div className="hof-card-stats">

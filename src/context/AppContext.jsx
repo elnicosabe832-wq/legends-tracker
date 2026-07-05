@@ -1229,6 +1229,64 @@ export function AppProvider({ children }) {
 
 
 
+  const updateChallengeProgress = useCallback((careerId, challengeId, nextProgress) => {
+
+    const catalog = getChallengeById(challengeId);
+
+    if (!catalog) return;
+
+    const max = catalog.maxProgress;
+
+    const progress = Math.max(0, Math.min(max, nextProgress));
+
+    const status = progress >= max ? 'completed' : 'active';
+
+    setState((s) => {
+
+      const c = s.userCareers[careerId];
+
+      if (!c) return s;
+
+      const list = (c.challenges?.active || []).map((a) =>
+
+        (a.challengeId === challengeId ? { ...a, progress, status } : a),
+
+      );
+
+      return {
+
+        ...s,
+
+        userCareers: {
+
+          ...s.userCareers,
+
+          [careerId]: { ...c, challenges: { active: list } },
+
+        },
+
+      };
+
+    });
+
+  }, []);
+
+
+
+  const incrementChallengeProgress = useCallback((careerId, challengeId, delta = 1) => {
+
+    const career = state.userCareers[careerId];
+
+    const entry = career?.challenges?.active?.find((a) => a.challengeId === challengeId);
+
+    if (!entry) return;
+
+    updateChallengeProgress(careerId, challengeId, (entry.progress || 0) + delta);
+
+  }, [state.userCareers, updateChallengeProgress]);
+
+
+
   const canActivateMoreChallenges = state.isPro
 
     || ((career?.challenges?.active?.length || 0) < FREE_ACTIVE_CHALLENGE_LIMIT);
@@ -1370,6 +1428,10 @@ export function AppProvider({ children }) {
         activateChallenge,
 
         deactivateChallenge,
+
+        incrementChallengeProgress,
+
+        updateChallengeProgress,
 
         canActivateMoreChallenges,
 

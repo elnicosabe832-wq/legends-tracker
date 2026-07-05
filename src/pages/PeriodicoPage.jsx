@@ -1,10 +1,12 @@
+import { lazy, Suspense } from 'react';
 import { useApp } from '../context/AppContext';
 import CareerSelector from '../components/CareerSelector';
 import EmptyCareerState from '../components/EmptyCareerState';
 import SeasonTabs from '../components/SeasonTabs';
 import EvolutionPanel from '../components/EvolutionPanel';
-import PremiumChronicle from '../components/PremiumChronicle';
 import { getSeasonData } from '../utils/seasonUtils';
+
+const PremiumChronicle = lazy(() => import('../components/PremiumChronicle'));
 
 export default function PeriodicoPage() {
   const { career, activeSeason, hasCareer } = useApp();
@@ -80,12 +82,14 @@ export default function PeriodicoPage() {
         )}
       </div>
 
-      <PremiumChronicle
-        chronicle={chronicle}
-        careerName={career.name}
-        seasonLabel={seasonData.label}
-        seasonCount={career.seasons.length}
-      />
+      <Suspense fallback={<p className="chart-loading">Cargando exportación…</p>}>
+        <PremiumChronicle
+          chronicle={chronicle}
+          careerName={career.name}
+          seasonLabel={seasonData.label}
+          seasonCount={career.seasons.length}
+        />
+      </Suspense>
     </div>
   );
 }
