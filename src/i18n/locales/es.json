@@ -165,6 +165,76 @@
     "deactivate": "Desactivar reto",
     "activate": "Activar reto",
     "limitReached": "Límite alcanzado",
+    "feed": {
+      "title": "Retos de la Comunidad",
+      "subtitle": "Reglas especiales creadas por la comunidad para tu Modo Carrera. Inspírate, vota tus favoritos y comparte tu progreso.",
+      "curated": "Curado por Admin · Más retos próximamente",
+      "adminBadge": "Admin",
+      "rulesTitle": "Reglas del reto",
+      "likes": "Me gusta",
+      "postedOn": "{{date}}",
+      "posts": {
+        "juve-rebuild-2526": {
+          "title": "Reconstrucción Juventus 25/26",
+          "description": "La Vecchia Signora en modo supervivencia: vende estrellas, apuesta por la cantera y compite sin locuras en el mercado.",
+          "rules": [
+            "Vender a Vlahović antes de la temporada 2",
+            "Máximo 3 fichajes por ventana de traspasos",
+            "Al menos 2 titulares sub-23 en el XI inicial",
+            "Terminar entre los 4 primeros de Serie A en 3 temporadas"
+          ]
+        },
+        "betis-granada-ascenso": {
+          "title": "Betis: solo talento hispano",
+          "description": "Dirige al Real Betis con identidad local. Fichajes españoles o de la cantera, estilo vertical y presión alta.",
+          "rules": [
+            "Solo fichar jugadores españoles o de la cantera",
+            "Mínimo 5 canteranos en plantilla",
+            "Ganar la Copa del Rey o clasificar a Champions en 4 temporadas"
+          ]
+        },
+        "leganes-salvador": {
+          "title": "El Salvador — Leganés",
+          "description": "Toma un club recién descendido con presupuesto mínimo y devuélvelo a Primera sin gastar más de 5M por temporada.",
+          "rules": [
+            "Empezar en Segunda División",
+            "Máximo 5M € en fichajes por temporada",
+            "Ascenso a LaLiga en las 2 primeras temporadas",
+            "No fichar jugadores con valor superior a 3M"
+          ]
+        },
+        "athletic-basque-only": {
+          "title": "Solo vascos — Athletic Club",
+          "description": "El reto definitivo de Lezama: cero excepciones, solo jugadores vascos y título de liga en 5 temporadas.",
+          "rules": [
+            "Solo jugadores de la cantera vasca (sin excepciones)",
+            "No más de 1 cesión por temporada",
+            "Ganar LaLiga al menos una vez",
+            "Llegar a semifinales de Europa League"
+          ]
+        },
+        "roma-underdog-ucl": {
+          "title": "Roma underdog — Champions",
+          "description": "Recrea la gesta de Mourinho con un presupuesto ajustado. Menos fichajes, más táctica y alma romana.",
+          "rules": [
+            "Presupuesto de fichajes inferior a 30M por temporada",
+            "Máximo 4 fichajes por ventana",
+            "Alcanzar cuartos de Champions en 3 temporadas",
+            "Ganar al menos un trofeo europeo o la Serie A"
+          ]
+        },
+        "betis-youth-revolution": {
+          "title": "Revolución cantera Betis",
+          "description": "Apuesta total por La Fábrica: 6 canteranos en el once inicial y ascenso meteórico desde Segunda.",
+          "rules": [
+            "Mínimo 6 canteranos en el XI inicial cada jornada",
+            "No fichar jugadores mayores de 23 años",
+            "Ascenso a Primera en la primera temporada",
+            "Un canterano debe marcar 15+ goles en la temporada del ascenso"
+          ]
+        }
+      }
+    },
     "items": {
       "cantera-titulo": {
         "title": "Reto de Cantera",
@@ -253,6 +323,7 @@
     "defaultDescription": "Complemento web para EA Sports FC Modo Carrera: sube capturas, genera crónicas, lleva temporadas. Funciona en móvil y consola. Gratis.",
     "challenges": "Retos",
     "challengesDesc": "Retos de Modo Carrera para tu save — cantera, fichajes, ascensos y más.",
+    "challengesFeedDesc": "Feed de retos de la comunidad para Modo Carrera EA FC — reglas, fichajes y desafíos creados por jugadores.",
     "howItWorks": "Cómo funciona",
     "howItWorksDesc": "Guía de Legends Tracker: capturas de Modo Carrera EA FC, crónicas automáticas, temporadas, móvil y consola.",
     "privacy": "Privacidad",

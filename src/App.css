@@ -3164,6 +3164,184 @@
       color: var(--neon-green);
     }
 
+    .retos-feed-badge {
+      display: inline-block;
+      margin-top: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--electric-blue);
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.25);
+      border-radius: 999px;
+    }
+
+    .community-challenges-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      max-width: 42rem;
+      margin: 0 auto;
+    }
+
+    .community-challenge-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .community-challenge-card:hover {
+      border-color: rgba(0, 255, 136, 0.25);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .community-challenge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .community-challenge-meta {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .community-challenge-team {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .community-challenge-date {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .community-challenge-author {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .community-author-avatar {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--neon-green-dim), var(--electric-blue));
+      color: #0a0e17;
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .community-challenge-author strong {
+      font-size: 0.9rem;
+      margin-right: 0.4rem;
+    }
+
+    .community-admin-badge {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--gold);
+      vertical-align: middle;
+    }
+
+    .community-challenge-title {
+      font-size: 1.15rem;
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    .community-challenge-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .community-challenge-rules {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+    }
+
+    .community-challenge-rules h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--neon-green);
+    }
+
+    .community-challenge-rules ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .community-challenge-rules li {
+      margin-bottom: 0.25rem;
+    }
+
+    .community-challenge-footer {
+      display: flex;
+      align-items: center;
+      padding-top: 0.35rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .community-like-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .community-like-btn:hover {
+      border-color: rgba(255, 100, 100, 0.4);
+      color: #ff8a8a;
+    }
+
+    .community-like-btn.liked {
+      border-color: rgba(255, 100, 100, 0.5);
+      background: rgba(255, 100, 100, 0.1);
+      color: #ff6b6b;
+    }
+
+    .community-like-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
     .hof-card-status {
       display: inline-block;
       margin-left: 0.5rem;

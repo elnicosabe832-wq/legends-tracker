@@ -165,6 +165,76 @@
     "deactivate": "Deactivate challenge",
     "activate": "Activate challenge",
     "limitReached": "Limit reached",
+    "feed": {
+      "title": "Community Challenges",
+      "subtitle": "Special rules created by the community for your Career Mode. Get inspired, vote for your favourites, and share your progress.",
+      "curated": "Curated by Admin · More challenges coming soon",
+      "adminBadge": "Admin",
+      "rulesTitle": "Challenge rules",
+      "likes": "Likes",
+      "postedOn": "{{date}}",
+      "posts": {
+        "juve-rebuild-2526": {
+          "title": "Juventus Rebuild 25/26",
+          "description": "The Old Lady in survival mode: sell stars, trust the academy, and compete without wild spending.",
+          "rules": [
+            "Sell Vlahović before season 2",
+            "Maximum 3 signings per transfer window",
+            "At least 2 U-23 starters in the starting XI",
+            "Finish top 4 in Serie A within 3 seasons"
+          ]
+        },
+        "betis-granada-ascenso": {
+          "title": "Betis: Spanish talent only",
+          "description": "Manage Real Betis with local identity. Spanish or academy signings, vertical play and high press.",
+          "rules": [
+            "Only sign Spanish players or academy graduates",
+            "Minimum 5 academy players in the squad",
+            "Win the Copa del Rey or qualify for Champions League in 4 seasons"
+          ]
+        },
+        "leganes-salvador": {
+          "title": "The Saviour — Leganés",
+          "description": "Take a newly relegated club with a tiny budget and return to LaLiga without spending more than €5M per season.",
+          "rules": [
+            "Start in Segunda División",
+            "Maximum €5M in signings per season",
+            "Promotion to LaLiga within the first 2 seasons",
+            "No signings valued above €3M"
+          ]
+        },
+        "athletic-basque-only": {
+          "title": "Basque only — Athletic Club",
+          "description": "The ultimate Lezama challenge: zero exceptions, Basque players only, and a league title in 5 seasons.",
+          "rules": [
+            "Basque academy players only (no exceptions)",
+            "No more than 1 loan per season",
+            "Win LaLiga at least once",
+            "Reach the Europa League semi-finals"
+          ]
+        },
+        "roma-underdog-ucl": {
+          "title": "Roma underdog — Champions",
+          "description": "Recreate Mourinho's miracle on a tight budget. Fewer signings, more tactics and Roman heart.",
+          "rules": [
+            "Transfer budget under €30M per season",
+            "Maximum 4 signings per window",
+            "Reach Champions League quarter-finals within 3 seasons",
+            "Win at least one European trophy or Serie A"
+          ]
+        },
+        "betis-youth-revolution": {
+          "title": "Betis youth revolution",
+          "description": "All-in on La Fábrica: 6 academy players in the starting XI and a meteoric rise from the second tier.",
+          "rules": [
+            "Minimum 6 academy players in the starting XI every matchday",
+            "No signings over 23 years old",
+            "Promotion to the top flight in the first season",
+            "One academy player must score 15+ goals in the promotion season"
+          ]
+        }
+      }
+    },
     "items": {
       "cantera-titulo": {
         "title": "Youth Academy Challenge",
@@ -253,6 +323,7 @@
     "defaultDescription": "Web companion for EA Sports FC Career Mode: upload screenshots, generate chronicles, track seasons. Works on mobile and console. Free.",
     "challenges": "Challenges",
     "challengesDesc": "Career Mode challenges for your save — youth academy, signings, promotions and more.",
+    "challengesFeedDesc": "Community challenge feed for EA FC Career Mode — rules, signings and player-created challenges.",
     "howItWorks": "How it works",
     "howItWorksDesc": "Legends Tracker guide: EA FC Career Mode screenshots, auto chronicles, seasons, mobile and console.",
     "privacy": "Privacy",
