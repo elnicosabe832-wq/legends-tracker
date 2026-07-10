@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 
 export default function CreateCareerModal() {
+  const { t } = useTranslation();
   const { showCreateModal, setShowCreateModal, createCareer } = useApp();
   const [name, setName] = useState('');
   const [subtitle, setSubtitle] = useState('');
@@ -21,31 +23,31 @@ export default function CreateCareerModal() {
       <div className="modal create-modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={() => setShowCreateModal(false)}>✕</button>
         <div className="crown">⚽</div>
-        <h2>Nueva Carrera</h2>
-        <p>Escribe el nombre de tu equipo y empieza a registrar estadísticas de tu Modo Carrera.</p>
+        <h2>{t('career.modalTitle')}</h2>
+        <p>{t('career.modalDesc')}</p>
 
         <form onSubmit={handleSubmit} className="create-form">
           <label>
-            Nombre del equipo *
+            {t('career.teamName')}
             <input
               type="text"
-              placeholder="Ej: A.S. Roma, Pisa S.C., Inter de Milán..."
+              placeholder={t('career.teamPlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoFocus
             />
           </label>
           <label>
-            Apodo / subtítulo (opcional)
+            {t('career.subtitle')}
             <input
               type="text"
-              placeholder="Ej: La Loba Capitalina, Jóvenes Promesas..."
+              placeholder={t('career.subtitlePlaceholder')}
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
             />
           </label>
           <button type="submit" className="modal-btn-primary" disabled={!name.trim()}>
-            Crear Carrera
+            {t('career.create')}
           </button>
         </form>
       </div>

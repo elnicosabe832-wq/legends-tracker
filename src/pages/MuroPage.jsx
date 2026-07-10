@@ -1,4 +1,5 @@
 import { useState, lazy, Suspense } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 import CareerSelector from '../components/CareerSelector';
 import EmptyCareerState from '../components/EmptyCareerState';
@@ -8,9 +9,10 @@ import RealLifeCompare from '../components/RealLifeCompare';
 import EvolutionPanel from '../components/EvolutionPanel';
 import HallOfFamePanel from '../components/HallOfFamePanel';
 import ActiveSquadPanel from '../components/ActiveSquadPanel';
-import { getSeasonData, buildRankings, getPlayerMovers } from '../utils/seasonUtils';
+import { getSeasonData, buildRankings, getPlayerMovers, seasonLabel, seasonNumFromId } from '../utils/seasonUtils';
 import { countLicensedClubs } from '../data/eaFcDatabase';
 import { getClubRecords, countClubsWithRecords } from '../data/clubRecords';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const PlayerPerformanceChart = lazy(() => import('../components/PlayerPerformanceChart'));
 
@@ -18,7 +20,17 @@ const POS_CLASS = ['gold', 'silver', 'bronze', 'normal'];
 const LICENSED_COUNT = countLicensedClubs();
 const RECORDS_COUNT = countClubsWithRecords();
 
+function resolveSeasonLabel(career, activeSeason, seasonData) {
+  if (activeSeason === 'total') return seasonData.label;
+  const s = career.seasons.find((x) => x.id === activeSeason);
+  const num = seasonNumFromId(s?.id);
+  return num ? seasonLabel(num) : seasonData.label;
+}
+
 export default function MuroPage() {
+  const { t } = useTranslation();
+  usePageMeta({ title: t('nav.wall'), path: '/muro' });
+
   const {
     career,
     activeSeason,
@@ -39,14 +51,15 @@ export default function MuroPage() {
       <div className="page">
         <CareerSelector />
         <EmptyCareerState
-          title="Sin carrera activa"
-          description="Crea un Modo Carrera y sube tus capturas para ver el Muro de Leyendas."
+          title={t('career.noCareerTitle')}
+          description={t('career.noCareerWall')}
         />
       </div>
     );
   }
 
   const seasonData = getSeasonData(career, activeSeason);
+  const displayLabel = resolveSeasonLabel(career, activeSeason, seasonData);
   const hasData = seasonData?.players?.length > 0;
   const isTotal = activeSeason === 'total';
   const showEvolution = isTotal && career.seasons.length > 1;
@@ -87,8 +100,8 @@ export default function MuroPage() {
       <div className="page">
         <CareerSelector />
         <EmptyCareerState
-          title="Aún no hay estadísticas"
-          description="Ve a Carga, sube capturas de EA FC y pulsa Procesar para llenar el Muro de Leyendas."
+          title={t('career.noStatsTitle')}
+          description={t('career.noStatsDescription')}
         />
       </div>
     );
@@ -96,10 +109,10 @@ export default function MuroPage() {
 
   const rankings = buildRankings(seasonData.players);
   const rankingCards = [
-    { cls: 'goals', title: '⚽ Goleadores', items: rankings.goals },
-    { cls: 'assists', title: '🎯 Asistentes', items: rankings.assists },
-    { cls: 'matches', title: '📋 Más Partidos', items: rankings.matches },
-    { cls: 'clean', title: '🧤 Porterías a Cero', items: rankings.cleanSheets },
+    { cls: 'goals', title: `⚽ ${t('muro.topScorers')}`, items: rankings.goals },
+    { cls: 'assists', title: `🎯 ${t('muro.topAssists')}`, items: rankings.assists },
+    { cls: 'matches', title: `📋 ${t('muro.mostMatches')}`, items: rankings.matches },
+    { cls: 'clean', title: `🧤 ${t('muro.cleanSheets')}`, items: rankings.cleanSheets },
   ];
 
   return (
@@ -107,8 +120,15 @@ export default function MuroPage() {
       <CareerSelector showDelete />
 
       <div className="muro-title">
-        <h2><span className="green">Muro</span> de <span className="blue">Leyendas</span></h2>
-        <p>{seasonData.label} — {career.name} ({career.subtitle}) · Todas las competiciones</p>
+        <h2>
+          <Trans i18nKey="muro.title" components={{ 1: <span className="green" />, 2: <span className="blue" /> }} />
+        </h2>
+        <p>{t('muro.subtitle', {
+          label: displayLabel,
+          name: career.name,
+          subtitle: career.subtitle,
+        })}
+        </p>
       </div>
 
       <div className="muro-tabs">
@@ -117,14 +137,14 @@ export default function MuroPage() {
           className={`muro-tab ${muroTab === 'rankings' ? 'active' : ''}`}
           onClick={() => setMuroTab('rankings')}
         >
-          🏆 Rankings
+          🏆 {t('muro.rankings')}
         </button>
         <button
           type="button"
           className={`muro-tab muro-tab-pro ${muroTab === 'salon' ? 'active' : ''}`}
           onClick={openSalonTab}
         >
-          👑 Salón de la Fama
+          👑 {t('muro.hallOfFame')}
           {!isPro && <span className="muro-tab-lock">PRO</span>}
         </button>
         <button
@@ -132,7 +152,7 @@ export default function MuroPage() {
           className={`muro-tab muro-tab-pro ${muroTab === 'historia' ? 'active' : ''}`}
           onClick={openHistoriaTab}
         >
-          ⚖️ Historia Real
+          ⚖️ {t('muro.realHistory')}
           {!isPro && <span className="muro-tab-lock">PRO</span>}
         </button>
       </div>
@@ -153,7 +173,7 @@ export default function MuroPage() {
                 movers={playerMovers}
                 showMovers
               />
-              <Suspense fallback={<p className="chart-loading">Cargando gráficos…</p>}>
+              <Suspense fallback={<p className="chart-loading">{t('common.loadingCharts')}</p>}>
                 <PlayerPerformanceChart seasons={career.seasons} />
               </Suspense>
             </>
@@ -168,7 +188,7 @@ export default function MuroPage() {
                     <div className={`ranking-pos ${POS_CLASS[i]}`}>{i + 1}</div>
                     <div className="ranking-info">
                       <div className="player">{item.name}</div>
-                      <div className="detail">{item.pos} · {item.matches} PJ</div>
+                      <div className="detail">{item.pos} · {item.matches} {t('common.matchesPlayed')}</div>
                     </div>
                     <div className="ranking-value">{item.value}</div>
                   </div>
@@ -183,7 +203,7 @@ export default function MuroPage() {
               className="compare-btn"
               onClick={() => setMuroTab('historia')}
             >
-              🏅 Comparar con Récords Reales
+              🏅 {t('muro.compareRecords')}
             </button>
           )}
         </>
@@ -200,13 +220,12 @@ export default function MuroPage() {
           <div className="historia-intro">
             <div className="historia-intro-icon">👑</div>
             <div>
-              <h3>Comparación con la historia real</h3>
+              <h3>{t('muro.historiaTitle')}</h3>
               <p>
-                Función <strong>Pro</strong>: vincula el club de EA FC con el que juegas en Modo Carrera
-                y compara tus estadísticas con los récords históricos del equipo.
+                <Trans i18nKey="muro.historiaDesc" components={{ 1: <strong /> }} />
               </p>
               <span className="historia-db-badge">
-                {LICENSED_COUNT}+ clubes EA FC · {RECORDS_COUNT} con récords históricos
+                {t('muro.historiaBadge', { clubs: LICENSED_COUNT, records: RECORDS_COUNT })}
               </span>
             </div>
           </div>
@@ -214,14 +233,14 @@ export default function MuroPage() {
           {career.linkedClub ? (
             <div className="linked-club-card">
               <div className="linked-club-info">
-                <span className="linked-club-label">Club vinculado</span>
+                <span className="linked-club-label">{t('muro.linkedClub')}</span>
                 <strong>{career.linkedClub.clubName}</strong>
                 <span className="linked-club-meta">
                   {career.linkedClub.leagueName} · {career.linkedClub.countryName}
                 </span>
               </div>
               <button type="button" className="linked-club-change" onClick={unlinkClub}>
-                Cambiar club
+                {t('muro.changeClub')}
               </button>
             </div>
           ) : (

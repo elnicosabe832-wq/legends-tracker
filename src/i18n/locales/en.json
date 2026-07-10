@@ -1,0 +1,303 @@
+{
+  "common": {
+    "language": "Language",
+    "season": "Season {{num}}",
+    "totalHistoric": "All-Time Total",
+    "seasonsShort": "{{count}} seasons",
+    "deleteSeason": "Delete {{label}}",
+    "matchesPlayed": "Apps",
+    "close": "Close",
+    "optional": "optional",
+    "loadingCharts": "Loading charts…",
+    "loadingExport": "Loading export…"
+  },
+  "header": {
+    "syncing": "Syncing...",
+    "saved": "Saved",
+    "syncError": "Sync error",
+    "signOut": "Sign out",
+    "signIn": "Sign in",
+    "proBusy": "Pro...",
+    "proActive": "Pro Mode Active",
+    "proActiveShort": "PRO",
+    "goPro": "Go Pro · €1.99/mo",
+    "goProShort": "Pro €1.99"
+  },
+  "nav": {
+    "upload": "Upload",
+    "newspaper": "The Newspaper",
+    "wall": "Legends Wall",
+    "challenges": "Challenges"
+  },
+  "footer": {
+    "tagline": "Legends Tracker — unofficial companion for EA FC Career Mode",
+    "howItWorks": "How it works",
+    "challenges": "Challenges",
+    "share": "Share",
+    "privacy": "Privacy"
+  },
+  "landing": {
+    "eyebrow": "Unofficial companion · EA Sports FC Career Mode",
+    "title": "Your career deserves a <1>chronicle</1>",
+    "lead": "Upload stats screenshots — works on <1>mobile and console</1>, no PC save files needed. Generate chronicles, track seasons, and relive your legends.",
+    "step1Title": "Capture",
+    "step1Text": "Take photos of your EA FC stats screens (squad, top scorers…).",
+    "step2Title": "Process",
+    "step2Text": "Upload the images. The app reads the data and creates the season.",
+    "step3Title": "Chronicle",
+    "step3Text": "Read the newspaper, legends wall, and player evolution.",
+    "startFree": "Start for free",
+    "viewDemo": "View sample career",
+    "howItWorks": "How it works"
+  },
+  "demo": {
+    "banner": "You're viewing a <1>sample career</1> with 5 seasons.",
+    "exit": "Exit demo",
+    "cargaHint": "Demo mode: explore The Newspaper and the Wall. To process your screenshots, exit the demo and create your career.",
+    "hasSeasons": "The sample career already has 5 seasons loaded.",
+    "viewNewspaper": "View The Newspaper",
+    "viewWall": "View Legends Wall"
+  },
+  "carga": {
+    "welcomeTitle": "Welcome to Legends Tracker!",
+    "welcomeText": "Your <1>Career Mode</1> companion: upload EA FC screenshots, generate chronicles, and compare your legends with club history.",
+    "processTitle": "What do you want to do with these screenshots?",
+    "newSeason": "New season",
+    "newSeasonHint": "Create {{season}}",
+    "replaceSeason": "Replace season",
+    "replaceSeasonHint": "Overwrite an existing season's data",
+    "replaceConfirm": "Replace {{label}} with the new screenshots? Its stats will be overwritten.",
+    "uploadTitle": "Drop your EA FC screenshots here",
+    "uploadHint": "or tap to choose photos from your gallery (JPG, PNG) — multiple at once",
+    "screenshotAlt": "Screenshot {{num}}",
+    "screenshotsReady_one": "{{count}} screenshot ready",
+    "screenshotsReady_other": "{{count}} screenshots ready",
+    "coldStart": "If the app hasn't been used in a while, processing may take up to 1 minute the first time.",
+    "process": "Process",
+    "replace": "Replace {{label}}",
+    "loadingStep1": "Reading squad menu...",
+    "loadingStep2": "Extracting scorers and assists...",
+    "loadingStep3": "Calculating clean sheets...",
+    "loadingStep4": "Generating sports chronicle...",
+    "loadingColdStart": "First load may take ~1 min (server waking up). Don't close the app.",
+    "preparing": "Preparing screenshots...",
+    "compressing": "Compressing {{count}} image(s)...",
+    "analyzing": "Analyzing {{count}} screenshot(s) for {{team}}...",
+    "generating": "Generating sports chronicle...",
+    "errorProcess": "Could not read the screenshots"
+  },
+  "career": {
+    "activeLabel": "Active Career:",
+    "createNew": "+ Create New Career",
+    "deleteTitle": "Delete career",
+    "freeTag": "FREE · {{count}}/1",
+    "proTag": "PRO · Unlimited",
+    "emptyTitle": "You don't have a Career Mode yet",
+    "emptyDescription": "Create your first career to start tracking goals, assists, and legends.",
+    "emptyFreePlan": "Your <1>Free</1> plan includes <2>1 career</2>",
+    "emptyFreeUsed": " (0/1 used)",
+    "noCareerTitle": "No active career",
+    "noCareerChallenges": "Create a Career Mode to activate challenges and track your special rules.",
+    "noCareerWall": "Create a Career Mode and upload screenshots to see the Legends Wall.",
+    "noStatsTitle": "No stats yet",
+    "noStatsDescription": "Go to Upload, add EA FC screenshots, and tap Process to fill the Legends Wall.",
+    "modalTitle": "New Career",
+    "modalDesc": "Enter your team name and start tracking your Career Mode stats.",
+    "teamName": "Team name *",
+    "teamPlaceholder": "E.g. A.S. Roma, Pisa S.C., Inter Milan...",
+    "subtitle": "Nickname / subtitle (optional)",
+    "subtitlePlaceholder": "E.g. The Capital She-Wolf, Young Prospects...",
+    "create": "Create Career"
+  },
+  "muro": {
+    "title": "<1>Legends</1> <2>Wall</2>",
+    "subtitle": "{{label}} — {{name}} ({{subtitle}}) · All competitions",
+    "rankings": "Rankings",
+    "hallOfFame": "Hall of Fame",
+    "realHistory": "Real History",
+    "topScorers": "Top Scorers",
+    "topAssists": "Top Assists",
+    "mostMatches": "Most Appearances",
+    "cleanSheets": "Clean Sheets",
+    "compareRecords": "Compare with Real Records",
+    "historiaTitle": "Comparison with real history",
+    "historiaDesc": "<1>Pro</1> feature: link your EA FC club with your Career Mode team and compare your stats with the team's historical records.",
+    "historiaBadge": "{{clubs}}+ EA FC clubs · {{records}} with historical records",
+    "linkedClub": "Linked club",
+    "changeClub": "Change club",
+    "squadTitle": "Active squad",
+    "squadMeta": "{{label}} · {{count}} players",
+    "squadHint": "Retire legends to the Hall of Fame when you sell or release a player in your save.",
+    "squadEmpty": "No players in the current squad or all are already in the Hall of Fame.",
+    "retire": "Retire",
+    "retireMenu": "Retire to Hall of Fame",
+    "proNote": "Pro feature — go Pro to immortalize players.",
+    "hofTitle": "Hall of Fame",
+    "hofIntro": "Immortalize players sold or retired from the active squad. Their card is frozen with lifetime club stats.",
+    "hofAdd": "Add legend",
+    "hofCandidatesHint": "Players no longer in the current squad:",
+    "hofEnshrine": "Immortalize",
+    "hofEmpty": "When you sell or retire players after several seasons, you can add them here.",
+    "hofRetired": "Retired",
+    "chartTitle": "Player evolution",
+    "chartLimit": "Free plan: last 2 seasons. <1>Pro</1> unlocks up to 15.",
+    "chartGoals": "Goals",
+    "chartAssists": "Assists",
+    "chartRating": "Perf. index",
+    "chartLocked": "Full chart history"
+  },
+  "retos": {
+    "title": "Career <1>Challenges</1>",
+    "subtitle": "{{name}} — Activate special rules and track progress manually after each season.",
+    "freeLimit": " Free plan: 1 active challenge.",
+    "activeSummary_one": "{{count}} active challenge",
+    "activeSummary_other": "{{count}} active challenges",
+    "completed_one": " · {{count}} completed",
+    "completed_other": " · {{count}} completed",
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "legend": "Legend"
+    },
+    "completedLabel": "Completed",
+    "progress": "+1 progress",
+    "markComplete": "Mark complete",
+    "deactivate": "Deactivate challenge",
+    "activate": "Activate challenge",
+    "limitReached": "Limit reached",
+    "items": {
+      "cantera-titulo": {
+        "title": "Youth Academy Challenge",
+        "description": "Win a title fielding at least 3 youth academy players in the starting XI.",
+        "progressLabel": "Youth titles"
+      },
+      "fichajes-nacionalidad": {
+        "title": "Strict Signing Policy",
+        "description": "You can only sign players of the same nationality as the club for 3 consecutive seasons.",
+        "progressLabel": "Seasons completed"
+      },
+      "salvador-ascenso": {
+        "title": "The Saviour",
+        "description": "Take a bottom-tier club and achieve promotion in the first season without spending more than €5M on signings.",
+        "progressLabel": "Promotion achieved"
+      },
+      "porteria-cero": {
+        "title": "Impenetrable Wall",
+        "description": "Keep 15 clean sheets in a single league season.",
+        "progressLabel": "Clean sheets"
+      },
+      "goleador-30": {
+        "title": "Break the Record",
+        "description": "A squad player must score 30 or more goals in a season.",
+        "progressLabel": "Top scorer goals"
+      },
+      "leyenda-local": {
+        "title": "One Club, One City",
+        "description": "Complete 5 seasons with the same club without switching teams.",
+        "progressLabel": "Seasons at club"
+      }
+    }
+  },
+  "auth": {
+    "login": "Sign in",
+    "register": "Create account",
+    "loginTab": "Sign in",
+    "registerTab": "Register",
+    "desc": "Save your careers in the cloud and access from any device.",
+    "noSupabase": "Supabase is not configured in the project <1>.env</1> file.",
+    "syncTip": "After creating an account you'll see ☁️ <1>Saved</1> in the header when synced.",
+    "google": "Continue with Google",
+    "orEmail": "or with email",
+    "password": "Password",
+    "passwordPlaceholder": "At least 6 characters",
+    "connecting": "Connecting...",
+    "errors": {
+      "invalidCredentials": "Incorrect email or password.",
+      "emailNotConfirmed": "Confirm your email before signing in.",
+      "userExists": "An account with this email already exists.",
+      "weakPassword": "Password must be at least 6 characters.",
+      "generic": "Authentication error. Please try again."
+    }
+  },
+  "premium": {
+    "title": "Don't let your story fade away",
+    "lead": "Turn your Career Mode into an <1>eternal legend</1> for less than a coffee a month.",
+    "benefits": [
+      "Unlimited careers",
+      "Real History — compare with club records",
+      "Hall of Fame — immortalize legends",
+      "Career challenges — special rules for your save",
+      "Full evolution charts (15 seasons)",
+      "Export premium chronicles for social media"
+    ],
+    "referralLabel": "Creator code (optional)",
+    "referralPlaceholder": "E.g. TORRE4",
+    "referralValid": "Valid code",
+    "referralFrom": "Code from {{name}}",
+    "referralInvalid": "Invalid code",
+    "secureNote": "Secure payment with Stripe. Cancel anytime from your account.",
+    "loginHint": "You need to sign in before paying.",
+    "redirecting": "Redirecting...",
+    "checkout": "Go Pro",
+    "checkoutLogin": "Sign in and go Pro",
+    "notNow": "Not now"
+  },
+  "loading": {
+    "emotional1": "Reading the local newspapers...",
+    "emotional2": "Editors are writing the match chronicle...",
+    "emotional3": "Updating your club's Hall of Fame...",
+    "emotional4": "Calculating your stars' averages..."
+  },
+  "meta": {
+    "defaultTitle": "EA FC Career Mode Chronicles",
+    "defaultDescription": "Web companion for EA Sports FC Career Mode: upload screenshots, generate chronicles, track seasons. Works on mobile and console. Free.",
+    "challenges": "Challenges",
+    "challengesDesc": "Career Mode challenges for your save — youth academy, signings, promotions and more.",
+    "howItWorks": "How it works",
+    "howItWorksDesc": "Legends Tracker guide: EA FC Career Mode screenshots, auto chronicles, seasons, mobile and console.",
+    "privacy": "Privacy",
+    "share": "Share"
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "subtitle": "Three steps to document your Career Mode",
+    "step1Title": "1. Create a career",
+    "step1Text": "Choose your club or manager save name. Pro users can have multiple careers; free plan includes one.",
+    "step2Title": "2. Upload screenshots",
+    "step2Text": "At the end of a season (or whenever you want), photograph or export EA FC screenshots: player stats, top scorers, etc.",
+    "step3Title": "3. Read your chronicle",
+    "step3Text": "Tap Process. You'll see the season newspaper, wall evolution, and build years of history.",
+    "faqTitle": "Frequently asked questions",
+    "cta": "Get started",
+    "faq": [
+      {
+        "q": "Do I need a PC or can I use console?",
+        "a": "Console and mobile work fine. You only need photos or screenshots of in-game stats screens. No need to extract save files."
+      },
+      {
+        "q": "What screenshots should I upload?",
+        "a": "Screens showing player names and stats: squad, top scorers, assists, clean sheets, etc. The clearer, the better."
+      },
+      {
+        "q": "Is it official from EA?",
+        "a": "No. Legends Tracker is an independent fan project. Not affiliated with EA Sports or EA FC."
+      },
+      {
+        "q": "Why is the first load slow?",
+        "a": "The free server may be \"asleep\". The first request can take up to 1 minute. Wait and try again."
+      },
+      {
+        "q": "What's included free vs Pro?",
+        "a": "Free: careers, chronicles, wall, cloud sync with account. Pro (€1.99/mo): Real History — compare your players with club historical records."
+      },
+      {
+        "q": "Do you store my screenshots?",
+        "a": "They're processed to extract data. Not intended as a permanent gallery. More details on the Privacy page."
+      },
+      {
+        "q": "Does it work with EA FC 25 / 26?",
+        "a": "Yes, with any recent EA FC/FIFA Career Mode version as long as screenshots show readable stats in Spanish or English."
+      }
+    ]
+  }
+}

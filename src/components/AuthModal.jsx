@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 
 export default function AuthModal() {
+  const { t } = useTranslation();
   const {
     showAuthModal,
     setShowAuthModal,
@@ -37,7 +39,6 @@ export default function AuthModal() {
     clearAuthError();
     try {
       await signInWithGoogle();
-      /* redirige a Google; no cerrar modal aquí */
     } catch {
       setBusy(false);
     }
@@ -68,14 +69,12 @@ export default function AuthModal() {
         <button type="button" className="modal-close" onClick={close}>✕</button>
 
         <div className="auth-modal-icon">☁️</div>
-        <h2>{mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}</h2>
-        <p className="auth-modal-desc">
-          Guarda tus carreras en la nube y accede desde cualquier dispositivo.
-        </p>
+        <h2>{mode === 'login' ? t('auth.login') : t('auth.register')}</h2>
+        <p className="auth-modal-desc">{t('auth.desc')}</p>
 
         {!isSupabaseConfigured && (
           <div className="auth-config-warning">
-            Falta configurar Supabase en el archivo <code>.env</code> del proyecto.
+            <Trans i18nKey="auth.noSupabase" components={{ 1: <code /> }} />
           </div>
         )}
 
@@ -87,7 +86,7 @@ export default function AuthModal() {
 
         {isSupabaseConfigured && !supabaseConnectionError && (
           <div className="auth-setup-tip">
-            Tras crear cuenta verás ☁️ <strong>Guardado</strong> en el header cuando sincronice.
+            <Trans i18nKey="auth.syncTip" components={{ 1: <strong /> }} />
           </div>
         )}
 
@@ -97,14 +96,14 @@ export default function AuthModal() {
             className={mode === 'login' ? 'active' : ''}
             onClick={() => switchMode('login')}
           >
-            Entrar
+            {t('auth.loginTab')}
           </button>
           <button
             type="button"
             className={mode === 'register' ? 'active' : ''}
             onClick={() => switchMode('register')}
           >
-            Registro
+            {t('auth.registerTab')}
           </button>
         </div>
 
@@ -117,9 +116,9 @@ export default function AuthModal() {
               disabled={busy}
             >
               <span className="auth-google-icon" aria-hidden="true">G</span>
-              Continuar con Google
+              {t('auth.google')}
             </button>
-            <p className="auth-divider"><span>o con email</span></p>
+            <p className="auth-divider"><span>{t('auth.orEmail')}</span></p>
           </>
         )}
 
@@ -136,12 +135,12 @@ export default function AuthModal() {
             />
           </label>
           <label>
-            Contraseña
+            {t('auth.password')}
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mínimo 6 caracteres"
+              placeholder={t('auth.passwordPlaceholder')}
               autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
               minLength={6}
               required
@@ -155,7 +154,7 @@ export default function AuthModal() {
             className="modal-btn-primary"
             disabled={busy || !isSupabaseConfigured || Boolean(supabaseConnectionError)}
           >
-            {busy ? 'Conectando...' : (mode === 'login' ? 'Entrar' : 'Crear cuenta')}
+            {busy ? t('auth.connecting') : (mode === 'login' ? t('auth.loginTab') : t('auth.register'))}
           </button>
         </form>
       </div>

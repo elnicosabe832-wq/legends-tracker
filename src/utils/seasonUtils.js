@@ -1,5 +1,12 @@
+import i18n from '../i18n';
+
 export function seasonLabel(num) {
-  return `Temporada ${num}`;
+  return i18n.t('common.season', { num });
+}
+
+export function seasonNumFromId(id) {
+  const m = id?.match(/^s(\d+)$/);
+  return m ? parseInt(m[1], 10) : null;
 }
 
 /** Renumera ids y etiquetas según el orden en la carrera. */
@@ -53,7 +60,7 @@ export function getSeasonData(career, seasonId) {
       ? generateHistoricalChronicle(seasons, career.name)
       : (seasons[0]?.chronicle || generateChronicle(players, career.name));
     return {
-      label: 'Total Histórico',
+      label: i18n.t('common.totalHistoric'),
       players,
       chronicle,
     };

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   LineChart,
   Line,
@@ -22,6 +23,7 @@ const CHART_THEME = {
 };
 
 export default function PlayerPerformanceChart({ seasons }) {
+  const { t } = useTranslation();
   const { isPro, setShowPremiumModal } = useApp();
   const evolution = useMemo(() => getPlayerEvolutionList(seasons), [seasons]);
   const [selected, setSelected] = useState(evolution[0]?.name || '');
@@ -36,7 +38,7 @@ export default function PlayerPerformanceChart({ seasons }) {
   const chart = (
     <div className="performance-chart">
       <div className="performance-chart-head">
-        <h4>📊 Evolución por jugador</h4>
+        <h4>📊 {t('muro.chartTitle')}</h4>
         <select
           className="performance-chart-select"
           value={selected}
@@ -56,7 +58,7 @@ export default function PlayerPerformanceChart({ seasons }) {
 
       {limited && (
         <p className="performance-chart-limit">
-          Plan gratis: últimas 2 temporadas. <strong>Pro</strong> desbloquea hasta 15.
+          <Trans i18nKey="muro.chartLimit" components={{ 1: <strong /> }} />
         </p>
       )}
 
@@ -78,7 +80,7 @@ export default function PlayerPerformanceChart({ seasons }) {
             <Line
               type="monotone"
               dataKey="goals"
-              name="Goles"
+              name={t('muro.chartGoals')}
               stroke={CHART_THEME.goals}
               strokeWidth={2}
               dot={{ r: 4 }}
@@ -86,7 +88,7 @@ export default function PlayerPerformanceChart({ seasons }) {
             <Line
               type="monotone"
               dataKey="assists"
-              name="Asistencias"
+              name={t('muro.chartAssists')}
               stroke={CHART_THEME.assists}
               strokeWidth={2}
               dot={{ r: 4 }}
@@ -94,7 +96,7 @@ export default function PlayerPerformanceChart({ seasons }) {
             <Line
               type="monotone"
               dataKey="rating"
-              name="Índice rend."
+              name={t('muro.chartRating')}
               stroke={CHART_THEME.rating}
               strokeWidth={2}
               strokeDasharray="4 4"
@@ -111,7 +113,7 @@ export default function PlayerPerformanceChart({ seasons }) {
   return (
     <ProFeatureGate
       locked={limited}
-      label="Histórico completo de gráficos"
+      label={t('muro.chartLocked')}
       onUnlock={() => setShowPremiumModal(true)}
     >
       {chart}

@@ -29,6 +29,7 @@ import {
 } from '../lib/stripeApi';
 
 import { buildDemoCareer, DEMO_CAREER_ID } from '../data/demoCareer';
+import i18n from '../i18n';
 
 import { buildEnshrinementSnapshot } from '../utils/hallOfFameUtils';
 import { getChallengeById, FREE_ACTIVE_CHALLENGE_LIMIT } from '../data/challenges';
@@ -1451,11 +1452,13 @@ export function AppProvider({ children }) {
 
 function translateAuthError(message) {
 
-  if (message.includes('Invalid login credentials')) return 'Email o contraseña incorrectos.';
+  if (message.includes('Invalid login credentials')) return i18n.t('auth.errors.invalidCredentials');
 
-  if (message.includes('User already registered')) return 'Ya existe una cuenta con ese email.';
+  if (message.includes('User already registered')) return i18n.t('auth.errors.userExists');
 
-  if (message.includes('Password should be at least')) return 'La contraseña debe tener al menos 6 caracteres.';
+  if (message.includes('Password should be at least')) return i18n.t('auth.errors.weakPassword');
+
+  if (message.includes('Email not confirmed')) return i18n.t('auth.errors.emailNotConfirmed');
 
   if (message.includes('Invalid API key')) {
 
@@ -1463,7 +1466,7 @@ function translateAuthError(message) {
 
   }
 
-  return message;
+  return message || i18n.t('auth.errors.generic');
 
 }
 

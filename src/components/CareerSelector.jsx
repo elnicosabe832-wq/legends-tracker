@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 
 export default function CareerSelector({ showFreeTag = false, showDelete = false }) {
+  const { t } = useTranslation();
   const {
     userCareers,
     activeCareer,
@@ -13,7 +15,7 @@ export default function CareerSelector({ showFreeTag = false, showDelete = false
 
   return (
     <div className="career-selector">
-      <label htmlFor="careerSelect">Carrera Activa:</label>
+      <label htmlFor="careerSelect">{t('career.activeLabel')}</label>
       <select
         id="careerSelect"
         className="career-select"
@@ -21,7 +23,7 @@ export default function CareerSelector({ showFreeTag = false, showDelete = false
         onChange={(e) => handleCareerSelect(e.target.value)}
       >
         {careers.length === 0 ? (
-          <option value="__create__">+ Crear Nueva Carrera</option>
+          <option value="__create__">{t('career.createNew')}</option>
         ) : (
           <>
             {careers.map((c) => (
@@ -29,7 +31,7 @@ export default function CareerSelector({ showFreeTag = false, showDelete = false
                 {c.name} ({c.subtitle})
               </option>
             ))}
-            <option value="__create__">+ Crear Nueva Carrera</option>
+            <option value="__create__">{t('career.createNew')}</option>
           </>
         )}
       </select>
@@ -42,14 +44,14 @@ export default function CareerSelector({ showFreeTag = false, showDelete = false
               : undefined
           }
         >
-          {isPro ? 'PRO · Ilimitadas' : `GRATIS · ${careerCount}/1`}
+          {isPro ? t('career.proTag') : t('career.freeTag', { count: careerCount })}
         </span>
       )}
       {showDelete && activeCareer && (
         <button
           type="button"
           className="delete-career-btn"
-          title="Eliminar carrera"
+          title={t('career.deleteTitle')}
           onClick={() => deleteCareer(activeCareer)}
         >
           🗑️

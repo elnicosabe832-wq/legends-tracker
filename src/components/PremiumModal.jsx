@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 import {
   getStoredReferralCode,
@@ -7,16 +8,8 @@ import {
 } from '../lib/referrals';
 import { validateReferralCode } from '../lib/referralApi';
 
-const PRO_BENEFITS = [
-  'Carreras ilimitadas',
-  'Historia Real — compara con récords del club',
-  'Salón de la Fama — inmortaliza leyendas',
-  'Retos de carrera — reglas especiales para tu save',
-  'Gráficos de evolución completos (15 temporadas)',
-  'Exportar crónicas premium para redes',
-];
-
 export default function PremiumModal() {
+  const { t } = useTranslation();
   const {
     showPremiumModal,
     setShowPremiumModal,
@@ -29,6 +22,8 @@ export default function PremiumModal() {
   const [referralCode, setReferralCode] = useState('');
   const [referralHint, setReferralHint] = useState('');
   const [referralValid, setReferralValid] = useState(null);
+
+  const benefits = t('premium.benefits', { returnObjects: true });
 
   useEffect(() => {
     if (!showPremiumModal) return;
@@ -57,10 +52,14 @@ export default function PremiumModal() {
       const result = await validateReferralCode(referralCode);
       if (result.valid) {
         setReferralValid(true);
-        setReferralHint(result.displayName ? `Código de ${result.displayName}` : 'Código válido');
+        setReferralHint(
+          result.displayName
+            ? t('premium.referralFrom', { name: result.displayName })
+            : t('premium.referralValid'),
+        );
       } else {
         setReferralValid(false);
-        setReferralHint(result.message || 'Código no válido');
+        setReferralHint(result.message || t('premium.referralInvalid'));
       }
     } catch {
       setReferralValid(null);
@@ -82,13 +81,13 @@ export default function PremiumModal() {
       <div className="modal premium-modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={() => setShowPremiumModal(false)}>✕</button>
         <div className="crown">👑</div>
-        <h2>No dejes que tu historia se borre</h2>
+        <h2>{t('premium.title')}</h2>
         <p className="premium-modal-lead">
-          Convierte tu Modo Carrera en una <strong>leyenda eterna</strong> por menos de un café al mes.
+          <Trans i18nKey="premium.lead" components={{ 1: <strong /> }} />
         </p>
 
         <ul className="premium-benefits">
-          {PRO_BENEFITS.map((b) => (
+          {Array.isArray(benefits) && benefits.map((b) => (
             <li key={b}>{b}</li>
           ))}
         </ul>
@@ -96,11 +95,11 @@ export default function PremiumModal() {
         <div className="price">1,99€<span>/mes</span></div>
 
         <label className="referral-field">
-          <span className="referral-label">Código de creador (opcional)</span>
+          <span className="referral-label">{t('premium.referralLabel')}</span>
           <input
             type="text"
             className={`referral-input${referralValid === true ? ' valid' : ''}${referralValid === false ? ' invalid' : ''}`}
-            placeholder="Ej. TORRE4"
+            placeholder={t('premium.referralPlaceholder')}
             value={referralCode}
             maxLength={32}
             autoComplete="off"
@@ -115,11 +114,9 @@ export default function PremiumModal() {
           )}
         </label>
 
-        <p className="premium-note">
-          Pago seguro con Stripe. Cancela cuando quieras desde tu cuenta.
-        </p>
+        <p className="premium-note">{t('premium.secureNote')}</p>
         {!user && (
-          <p className="premium-login-hint">Necesitas iniciar sesión antes de pagar.</p>
+          <p className="premium-login-hint">{t('premium.loginHint')}</p>
         )}
         <div className="modal-actions premium-modal-actions">
           <button
@@ -127,10 +124,10 @@ export default function PremiumModal() {
             onClick={handleCheckout}
             disabled={proBusy || referralValid === false}
           >
-            {proBusy ? 'Redirigiendo...' : (user ? 'Hacerse Pro' : 'Entrar y hacerse Pro')}
+            {proBusy ? t('premium.redirecting') : (user ? t('premium.checkout') : t('premium.checkoutLogin'))}
           </button>
           <button className="modal-btn-secondary" onClick={() => setShowPremiumModal(false)}>
-            Ahora no
+            {t('premium.notNow')}
           </button>
         </div>
       </div>

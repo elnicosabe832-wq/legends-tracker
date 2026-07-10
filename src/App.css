@@ -175,6 +175,50 @@
       align-items: center;
       gap: 0.75rem;
       flex-shrink: 0;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(0, 255, 136, 0.35);
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: rgba(0, 255, 136, 0.06);
+    }
+
+    .lang-switcher-icon {
+      padding: 0 0.35rem 0 0.5rem;
+      font-size: 0.85rem;
+      line-height: 1;
+    }
+
+    .lang-btn {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      cursor: pointer;
+      min-width: 2rem;
+    }
+
+    .lang-btn.active {
+      background: rgba(0, 255, 136, 0.2);
+      color: var(--neon-green);
+    }
+
+    .lang-btn:hover:not(.active) {
+      color: var(--text);
+    }
+
+    .lang-switcher-footer {
+      margin: 0 auto 0.75rem;
+      width: fit-content;
     }
 
     .auth-btn {

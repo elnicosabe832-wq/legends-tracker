@@ -1,6 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
+import { seasonLabel, seasonNumFromId } from '../utils/seasonUtils';
 
 export default function SeasonTabs() {
+  const { t } = useTranslation();
   const {
     career,
     activeCareer,
@@ -13,28 +16,34 @@ export default function SeasonTabs() {
 
   const activeSeasonData = career.seasons.find((s) => s.id === activeSeason);
   const canDeleteSeason = activeSeason !== 'total' && activeSeasonData;
+  const activeLabel = activeSeasonData
+    ? seasonLabel(seasonNumFromId(activeSeasonData.id) || 1)
+    : '';
 
   return (
     <div className="season-tabs-wrap">
       <div className="season-tabs">
-        {career.seasons.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            className={`season-tab ${activeSeason === s.id ? 'active' : ''}`}
-            onClick={() => setActiveSeason(s.id)}
-          >
-            {s.label}
-          </button>
-        ))}
+        {career.seasons.map((s) => {
+          const num = seasonNumFromId(s.id) || 1;
+          return (
+            <button
+              key={s.id}
+              type="button"
+              className={`season-tab ${activeSeason === s.id ? 'active' : ''}`}
+              onClick={() => setActiveSeason(s.id)}
+            >
+              {seasonLabel(num)}
+            </button>
+          );
+        })}
         {career.seasons.length > 1 && (
           <button
             type="button"
             className={`season-tab total ${activeSeason === 'total' ? 'active' : ''}`}
             onClick={() => setActiveSeason('total')}
           >
-            📊 Total Histórico
-            <span className="season-badge">{career.seasons.length} temps.</span>
+            📊 {t('common.totalHistoric')}
+            <span className="season-badge">{t('common.seasonsShort', { count: career.seasons.length })}</span>
           </button>
         )}
       </div>
@@ -45,7 +54,7 @@ export default function SeasonTabs() {
           className="delete-season-btn"
           onClick={() => deleteSeason(activeCareer, activeSeason)}
         >
-          🗑️ Eliminar {activeSeasonData.label}
+          🗑️ {t('common.deleteSeason', { label: activeLabel })}
         </button>
       )}
     </div>

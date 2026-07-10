@@ -19,6 +19,7 @@ import ComoFuncionaPage from './pages/ComoFuncionaPage';
 import CompartirPage from './pages/CompartirPage';
 import Footer from './components/Footer';
 import DemoBanner from './components/DemoBanner';
+import DocumentLang from './components/DocumentLang';
 import './App.css';
 
 function AppRoutes() {
@@ -29,6 +30,7 @@ function AppRoutes() {
   return (
     <>
       <Header />
+      <DocumentLang />
       <DemoBanner />
       <Navigation />
       <main className="main">

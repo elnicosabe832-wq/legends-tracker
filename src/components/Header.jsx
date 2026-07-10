@@ -1,76 +1,43 @@
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
-
-
-function syncLabel(status) {
-
-  if (status === 'syncing') return '☁️ Sincronizando...';
-
-  if (status === 'synced') return '☁️ Guardado';
-
-  if (status === 'error') return '☁️ Error sync';
-
+function syncLabel(status, t) {
+  if (status === 'syncing') return `☁️ ${t('header.syncing')}`;
+  if (status === 'synced') return `☁️ ${t('header.saved')}`;
+  if (status === 'error') return `☁️ ${t('header.syncError')}`;
   return '';
-
 }
 
-
-
 export default function Header() {
-
+  const { t } = useTranslation();
   const {
-
     isPro,
-
     handleProClick,
-
     proBusy,
-
     user,
-
     authLoading,
-
     isSupabaseConfigured,
-
     setShowAuthModal,
-
     signOut,
-
     syncStatus,
-
     supabaseConnectionError,
-
   } = useApp();
-
-
 
   const emailShort = user?.email?.split('@')[0];
 
-
-
   return (
-
     <header className="header">
-
       <div className="header-left">
-
         <div className="logo">
-
           <span className="green">Legends</span> <span className="blue">Tracker</span>
-
         </div>
-
+        <LanguageSwitcher />
         {isPro && <span className="pro-badge">★ PRO</span>}
-
         {user && syncStatus !== 'idle' && (
-
-          <span className={`sync-badge sync-${syncStatus}`}>{syncLabel(syncStatus)}</span>
-
+          <span className={`sync-badge sync-${syncStatus}`}>{syncLabel(syncStatus, t)}</span>
         )}
-
       </div>
-
-
 
       <div className="header-actions">
 
@@ -79,72 +46,40 @@ export default function Header() {
         )}
 
         {isSupabaseConfigured && !authLoading && (
-
           user ? (
-
             <div className="auth-user">
-
               <span className="auth-email" title={user.email}>{emailShort}</span>
-
               <button type="button" className="auth-btn auth-btn-out" onClick={signOut}>
-
-                Salir
-
+                {t('header.signOut')}
               </button>
-
             </div>
-
           ) : (
-
             <button type="button" className="auth-btn" onClick={() => setShowAuthModal(true)}>
-
-              Entrar
-
+              {t('header.signIn')}
             </button>
-
           )
-
         )}
-
-
 
         <button
           className={`pro-btn ${isPro ? 'is-pro' : ''}`}
           onClick={handleProClick}
           disabled={proBusy}
         >
-
           {proBusy ? (
-            <span>Pro...</span>
+            <span>{t('header.proBusy')}</span>
           ) : isPro ? (
-
             <>
-
-              <span className="pro-btn-label-full">✓ Modo Pro Activo</span>
-
-              <span className="pro-btn-label-short">✓ PRO</span>
-
+              <span className="pro-btn-label-full">✓ {t('header.proActive')}</span>
+              <span className="pro-btn-label-short">✓ {t('header.proActiveShort')}</span>
             </>
-
           ) : (
-
             <>
-
-              <span className="pro-btn-label-full">Hacerse Pro · 1,99€/mes</span>
-
-              <span className="pro-btn-label-short">Pro 1,99€</span>
-
+              <span className="pro-btn-label-full">{t('header.goPro')}</span>
+              <span className="pro-btn-label-short">{t('header.goProShort')}</span>
             </>
-
           )}
-
         </button>
-
       </div>
-
     </header>
-
   );
-
 }
-

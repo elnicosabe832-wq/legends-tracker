@@ -1,28 +1,29 @@
 import { Link } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 
-const STEPS = [
-  { n: '1', title: 'Captura', text: 'Haz fotos de tus pantallas de stats en EA FC (plantilla, goleadores…).' },
-  { n: '2', title: 'Procesa', text: 'Sube las imágenes. La app lee los datos y crea la temporada.' },
-  { n: '3', title: 'Crónica', text: 'Lee el periódico, el muro de leyendas y evolución de jugadores.' },
-];
-
 export default function LandingHero() {
+  const { t } = useTranslation();
   const { openCreateCareer, loadDemoCareer } = useApp();
 
+  const steps = [
+    { n: '1', title: t('landing.step1Title'), text: t('landing.step1Text') },
+    { n: '2', title: t('landing.step2Title'), text: t('landing.step2Text') },
+    { n: '3', title: t('landing.step3Title'), text: t('landing.step3Text') },
+  ];
+
   return (
-    <section className="landing-hero" aria-label="Presentación">
-      <p className="landing-eyebrow">Complemento no oficial · EA Sports FC Modo Carrera</p>
+    <section className="landing-hero" aria-label="Presentation">
+      <p className="landing-eyebrow">{t('landing.eyebrow')}</p>
       <h1 className="landing-title">
-        Tu carrera merece <span className="green">crónica</span>
+        <Trans i18nKey="landing.title" components={{ 1: <span className="green" /> }} />
       </h1>
       <p className="landing-lead">
-        Sube capturas de estadísticas — funciona en <strong>móvil y consola</strong>, sin subir saves de PC.
-        Genera crónicas, lleva temporadas y revive tus leyendas.
+        <Trans i18nKey="landing.lead" components={{ 1: <strong /> }} />
       </p>
 
       <div className="landing-steps">
-        {STEPS.map((s) => (
+        {steps.map((s) => (
           <div key={s.n} className="landing-step">
             <span className="landing-step-n">{s.n}</span>
             <strong>{s.title}</strong>
@@ -33,13 +34,13 @@ export default function LandingHero() {
 
       <div className="landing-cta">
         <button type="button" className="create-career-btn" onClick={openCreateCareer}>
-          Empezar gratis
+          {t('landing.startFree')}
         </button>
         <button type="button" className="landing-demo-btn" onClick={loadDemoCareer}>
-          Ver carrera de ejemplo
+          {t('landing.viewDemo')}
         </button>
         <Link to="/como-funciona" className="landing-link-btn">
-          Cómo funciona
+          {t('landing.howItWorks')}
         </Link>
       </div>
     </section>

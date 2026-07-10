@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 import CareerSelector from '../components/CareerSelector';
 import EmptyCareerState from '../components/EmptyCareerState';
@@ -5,10 +6,18 @@ import ChallengeCard from '../components/ChallengeCard';
 import { CHALLENGE_CATALOG, getChallengeById } from '../data/challenges';
 import { usePageMeta } from '../hooks/usePageMeta';
 
+const DIFFICULTY_KEYS = {
+  Fácil: 'easy',
+  Media: 'medium',
+  Leyenda: 'legend',
+};
+
 export default function RetosPage() {
+  const { t } = useTranslation();
+
   usePageMeta({
-    title: 'Retos',
-    description: 'Retos de Modo Carrera para tu save — cantera, fichajes, ascensos y más.',
+    title: t('meta.challenges'),
+    description: t('meta.challengesDesc'),
     path: '/retos',
   });
 
@@ -25,13 +34,21 @@ export default function RetosPage() {
     canActivateMoreChallenges,
   } = useApp();
 
+  const localizeChallenge = (ch) => ({
+    ...ch,
+    title: t(`retos.items.${ch.id}.title`),
+    description: t(`retos.items.${ch.id}.description`),
+    progressLabel: t(`retos.items.${ch.id}.progressLabel`),
+    difficulty: t(`retos.difficulty.${DIFFICULTY_KEYS[ch.difficulty] || 'medium'}`),
+  });
+
   if (!hasCareer) {
     return (
       <div className="page">
         <CareerSelector />
         <EmptyCareerState
-          title="Sin carrera activa"
-          description="Crea un Modo Carrera para activar retos y llevar el control de tus reglas especiales."
+          title={t('career.noCareerTitle')}
+          description={t('career.noCareerChallenges')}
         />
       </div>
     );
@@ -46,18 +63,20 @@ export default function RetosPage() {
       <CareerSelector showDelete />
 
       <div className="retos-header">
-        <h2><span className="green">Retos</span> de <span className="blue">Carrera</span></h2>
+        <h2>
+          <span className="green">{t('nav.challenges')}</span>
+        </h2>
         <p>
-          {career.name} — Activa reglas especiales y marca el progreso a mano tras cada temporada.
-          {!isPro && ' Plan gratis: 1 reto activo.'}
+          {t('retos.subtitle', { name: career.name })}
+          {!isPro && t('retos.freeLimit')}
         </p>
       </div>
 
       {activeList.length > 0 && (
         <div className="retos-active-summary">
-          <strong>{activeList.length} reto{activeList.length !== 1 ? 's' : ''} activo{activeList.length !== 1 ? 's' : ''}</strong>
+          <strong>{t('retos.activeSummary', { count: activeList.length })}</strong>
           {completedCount > 0 && (
-            <span> · {completedCount} cumplido{completedCount !== 1 ? 's' : ''}</span>
+            <span>{t('retos.completed', { count: completedCount })}</span>
           )}
         </div>
       )}
@@ -68,11 +87,12 @@ export default function RetosPage() {
           const isActive = activeIds.has(ch.id);
           const locked = ch.proOnly && !isPro;
           const canActivate = canActivateMoreChallenges || isActive;
+          const localized = localizeChallenge(ch);
 
           return (
             <ChallengeCard
               key={ch.id}
-              challenge={ch}
+              challenge={localized}
               activeEntry={entry}
               isActive={isActive}
               canActivate={canActivate}

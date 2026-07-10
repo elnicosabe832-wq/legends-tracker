@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '../lib/site.js';
+import { useTranslation } from 'react-i18next';
+import { SITE_NAME, SITE_URL } from '../lib/site.js';
 
 function setMeta(name, content, attr = 'name') {
   if (!content) return;
@@ -13,11 +14,13 @@ function setMeta(name, content, attr = 'name') {
 }
 
 export function usePageMeta({ title, description, path = '' }) {
+  const { t, i18n } = useTranslation();
+
   useEffect(() => {
     const pageTitle = title
       ? `${title} — ${SITE_NAME}`
-      : `${SITE_NAME} — Crónicas del Modo Carrera EA FC`;
-    const desc = description || SITE_DESCRIPTION;
+      : `${SITE_NAME} — ${t('meta.defaultTitle')}`;
+    const desc = description || t('meta.defaultDescription');
     const url = `${SITE_URL}${path}`;
 
     document.title = pageTitle;
@@ -40,5 +43,5 @@ export function usePageMeta({ title, description, path = '' }) {
       document.head.appendChild(canonical);
     }
     canonical.href = url;
-  }, [title, description, path]);
+  }, [title, description, path, t, i18n.language]);
 }

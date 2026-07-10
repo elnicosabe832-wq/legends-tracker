@@ -1,28 +1,30 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 
-const EMOTIONAL_MESSAGES = [
-  'Leyendo los periódicos locales...',
-  'Los redactores están escribiendo la crónica del partido...',
-  'Actualizando el Salón de la Fama de tu club...',
-  'Calculando promedios de tus estrellas...',
-];
-
 export default function LoadingOverlay() {
+  const { t, i18n } = useTranslation();
   const { loading, loadingText, loadingSteps } = useApp();
+
+  const emotionalMessages = useMemo(() => [
+    t('loading.emotional1'),
+    t('loading.emotional2'),
+    t('loading.emotional3'),
+    t('loading.emotional4'),
+  ], [t, i18n.language]);
 
   useEffect(() => {
     if (!loading) return undefined;
 
     let idx = 0;
     const interval = setInterval(() => {
-      idx = (idx + 1) % EMOTIONAL_MESSAGES.length;
+      idx = (idx + 1) % emotionalMessages.length;
       const el = document.querySelector('.loading-steps-emotional');
-      if (el) el.textContent = EMOTIONAL_MESSAGES[idx];
+      if (el) el.textContent = emotionalMessages[idx];
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [loading]);
+  }, [loading, emotionalMessages]);
 
   if (!loading) return null;
 
@@ -32,7 +34,7 @@ export default function LoadingOverlay() {
       <div className="loading-text">{loadingText}</div>
       <div className="loading-steps">{loadingSteps}</div>
       <div className="loading-steps loading-steps-emotional">
-        {EMOTIONAL_MESSAGES[0]}
+        {emotionalMessages[0]}
       </div>
     </div>
   );

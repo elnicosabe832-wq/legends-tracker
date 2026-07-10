@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Trans, useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 import CareerSelector from '../components/CareerSelector';
 import EmptyCareerState from '../components/EmptyCareerState';
@@ -9,15 +10,16 @@ import { seasonLabel } from '../utils/seasonUtils';
 import LandingHero from '../components/LandingHero';
 import { usePageMeta } from '../hooks/usePageMeta';
 
-const LOADING_STEPS = [
-  'Leyendo Menú de plantilla...',
-  'Extrayendo goleadores y asistentes...',
-  'Calculando porterías a cero...',
-  'Generando crónica deportiva...',
-];
-
 export default function CargaPage() {
+  const { t } = useTranslation();
   usePageMeta({ path: '/' });
+
+  const LOADING_STEPS = useMemo(() => [
+    t('carga.loadingStep1'),
+    t('carga.loadingStep2'),
+    t('carga.loadingStep3'),
+    t('carga.loadingStep4'),
+  ], [t]);
 
   const navigate = useNavigate();
   const {
@@ -77,60 +79,61 @@ export default function CargaPage() {
 
     if (processMode === 'replace') {
       if (!replaceSeasonId || !replaceTarget) return;
-      if (!window.confirm(
-        `¿Reemplazar ${replaceTarget.label} con las nuevas capturas? Se sobrescribirán sus estadísticas.`,
-      )) return;
+      const label = seasonLabel(parseInt(replaceSeasonId.replace('s', ''), 10));
+      if (!window.confirm(t('carga.replaceConfirm', { label }))) return;
     }
 
     setLoading(true);
     setLoadingText(LOADING_STEPS[0]);
-    setLoadingSteps('La primera carga puede tardar ~1 min (servidor despertando). No cierres la app.');
+    setLoadingSteps(t('carga.loadingColdStart'));
 
     try {
-      setLoadingText('Preparando capturas...');
-      setLoadingSteps(`Comprimiendo ${images.length} imagen(es)...`);
+      setLoadingText(t('carga.preparing'));
+      setLoadingSteps(t('carga.compressing', { count: images.length }));
 
       const compressed = await prepareImagesForUpload(images);
 
-      setLoadingText('Leyendo capturas...');
-      setLoadingSteps(`Analizando ${compressed.length} captura(s) de ${career.name}...`);
+      setLoadingText(t('carga.loadingStep1'));
+      setLoadingSteps(t('carga.analyzing', { count: compressed.length, team: career.name }));
 
       const data = await processScreenshots(compressed, career.name);
 
-      setLoadingText('Generando crónica deportiva...');
+      setLoadingText(t('carga.generating'));
       applyProcessedSeason(activeCareer, data.players, {
         replaceSeasonId: processMode === 'replace' ? replaceSeasonId : null,
       });
       setImages([]);
       navigate('/periodico');
     } catch (err) {
-      showError(err.message || 'No se pudieron leer las capturas');
+      showError(err.message || t('carga.errorProcess'));
     } finally {
       setLoading(false);
     }
   };
 
+  const nextSeasonLabel = hasSeasons ? seasonLabel(career.seasons.length + 1) : '';
+  const replaceLabel = replaceTarget
+    ? seasonLabel(parseInt(replaceTarget.id.replace('s', ''), 10))
+    : replaceTarget?.label;
+
   const processLabel = processMode === 'replace' && replaceTarget
-    ? `🔄 Reemplazar ${replaceTarget.label}`
-    : `⚡ Procesar${hasSeasons ? ` (${seasonLabel(career.seasons.length + 1)})` : ''}`;
+    ? `🔄 ${t('carga.replace', { label: replaceLabel })}`
+    : `⚡ ${t('carga.process')}${hasSeasons ? ` (${nextSeasonLabel})` : ''}`;
 
   return (
     <div className="page">
       {!hasCareer && <LandingHero />}
 
       {isDemoMode && (
-        <p className="demo-carga-hint">
-          Modo demo: explora El Periódico y el Muro. Para procesar tus capturas, sal del demo y crea tu carrera.
-        </p>
+        <p className="demo-carga-hint">{t('demo.cargaHint')}</p>
       )}
 
       {!welcomeDismissed && hasCareer && !isDemoMode && (
         <div className="welcome-banner">
           <div>
-            <h3>👋 ¡Bienvenido a Legends Tracker!</h3>
+            <h3>👋 {t('carga.welcomeTitle')}</h3>
             <p>
-              Tu complemento para <strong>Modo Carrera</strong>: sube capturas de EA FC, genera
-              crónicas y compara tus leyendas con la historia del club.
+              <Trans i18nKey="carga.welcomeText" components={{ 1: <strong /> }} />
             </p>
           </div>
           <button className="welcome-close" onClick={dismissWelcome}>✕</button>
@@ -143,12 +146,12 @@ export default function CargaPage() {
         <EmptyCareerState />
       ) : isDemoMode ? (
         <div className="demo-carga-cta">
-          <p>La carrera de ejemplo ya tiene 5 temporadas cargadas.</p>
+          <p>{t('demo.hasSeasons')}</p>
           <button type="button" className="landing-link-btn" onClick={() => navigate('/periodico')}>
-            Ver El Periódico
+            {t('demo.viewNewspaper')}
           </button>
           <button type="button" className="landing-link-btn" onClick={() => navigate('/muro')}>
-            Ver Muro de Leyendas
+            {t('demo.viewWall')}
           </button>
         </div>
       ) : (
@@ -157,7 +160,7 @@ export default function CargaPage() {
             <OnboardingGuide />
           ) : (
             <div className="season-process-mode">
-              <p className="season-process-title">¿Qué quieres hacer con estas capturas?</p>
+              <p className="season-process-title">{t('carga.processTitle')}</p>
               <div className="season-process-options">
                 <label className={`season-process-option ${processMode === 'new' ? 'active' : ''}`}>
                   <input
@@ -168,8 +171,8 @@ export default function CargaPage() {
                     onChange={() => setProcessMode('new')}
                   />
                   <span>
-                    <strong>Nueva temporada</strong>
-                    <small>Crear {seasonLabel(career.seasons.length + 1)}</small>
+                    <strong>{t('carga.newSeason')}</strong>
+                    <small>{t('carga.newSeasonHint', { season: nextSeasonLabel })}</small>
                   </span>
                 </label>
                 <label className={`season-process-option ${processMode === 'replace' ? 'active' : ''}`}>
@@ -181,8 +184,8 @@ export default function CargaPage() {
                     onChange={() => setProcessMode('replace')}
                   />
                   <span>
-                    <strong>Reemplazar temporada</strong>
-                    <small>Sobrescribir datos de una existente</small>
+                    <strong>{t('carga.replaceSeason')}</strong>
+                    <small>{t('carga.replaceSeasonHint')}</small>
                   </span>
                 </label>
               </div>
@@ -193,7 +196,9 @@ export default function CargaPage() {
                   onChange={(e) => setReplaceSeasonId(e.target.value)}
                 >
                   {career.seasons.map((s) => (
-                    <option key={s.id} value={s.id}>{s.label}</option>
+                    <option key={s.id} value={s.id}>
+                      {seasonLabel(parseInt(s.id.replace('s', ''), 10))}
+                    </option>
                   ))}
                 </select>
               )}
@@ -208,18 +213,18 @@ export default function CargaPage() {
             onClick={() => fileRef.current?.click()}
           >
             <div className="icon">📸</div>
-            <h3>Arrastra tus capturas de EA FC aquí</h3>
-            <p>o toca aquí para elegir fotos de la galería (JPG, PNG) — varias a la vez</p>
+            <h3>{t('carga.uploadTitle')}</h3>
+            <p>{t('carga.uploadHint')}</p>
 
             {images.length > 0 && (
               <div className="upload-preview visible">
                 <div className="upload-grid">
                   {images.map((src, i) => (
-                    <img key={i} className="upload-thumb" src={src} alt={`Captura ${i + 1}`} />
+                    <img key={i} className="upload-thumb" src={src} alt={t('carga.screenshotAlt', { num: i + 1 })} />
                   ))}
                 </div>
                 <div className="upload-count">
-                  {images.length} captura{images.length !== 1 ? 's' : ''} lista{images.length !== 1 ? 's' : ''}
+                  {t('carga.screenshotsReady', { count: images.length })}
                 </div>
               </div>
             )}
@@ -234,9 +239,7 @@ export default function CargaPage() {
             onChange={(e) => { addFiles(e.target.files); e.target.value = ''; }}
           />
 
-          <p className="cold-start-hint">
-            Si la app lleva un rato sin usarse, el procesado puede tardar hasta 1 minuto la primera vez.
-          </p>
+          <p className="cold-start-hint">{t('carga.coldStart')}</p>
 
           <button
             className={`process-btn ${processMode === 'replace' ? 'replace' : ''}`}

@@ -1,7 +1,12 @@
+import { useTranslation } from 'react-i18next';
+
 const DIFFICULTY_CLASS = {
   Fácil: 'easy',
   Media: 'medium',
   Leyenda: 'legend',
+  Easy: 'easy',
+  Medium: 'medium',
+  Legend: 'legend',
 };
 
 export default function ChallengeCard({
@@ -16,6 +21,7 @@ export default function ChallengeCard({
   locked,
   onUnlock,
 }) {
+  const { t } = useTranslation();
   const progress = activeEntry?.progress ?? 0;
   const max = challenge.maxProgress;
   const pct = max > 0 ? Math.min(100, Math.round((progress / max) * 100)) : 0;
@@ -41,7 +47,7 @@ export default function ChallengeCard({
           {challenge.difficulty}
         </span>
         {challenge.proOnly && <span className="challenge-pro-badge">PRO</span>}
-        {completed && <span className="challenge-done-badge">✓ Cumplido</span>}
+        {completed && <span className="challenge-done-badge">✓ {t('retos.completedLabel')}</span>}
       </div>
       <h3>{challenge.title}</h3>
       <p className="challenge-desc">{challenge.description}</p>
@@ -49,7 +55,7 @@ export default function ChallengeCard({
       <div className="challenge-progress-wrap">
         <div className="challenge-progress-label">
           <span>{challenge.progressLabel}</span>
-          <span>{completed ? 'Cumplido' : `${progress}/${max}`}</span>
+          <span>{completed ? t('retos.completedLabel') : `${progress}/${max}`}</span>
         </div>
         <div className="challenge-progress-bar">
           <div className="challenge-progress-fill" style={{ width: `${pct}%` }} />
@@ -59,10 +65,10 @@ export default function ChallengeCard({
       {isActive && !completed && (
         <div className="challenge-progress-actions">
           <button type="button" className="challenge-progress-btn" onClick={() => onIncrement?.(1)}>
-            +1 progreso
+            {t('retos.progress')}
           </button>
           <button type="button" className="challenge-progress-btn complete" onClick={onComplete}>
-            Marcar cumplido
+            {t('retos.markComplete')}
           </button>
         </div>
       )}
@@ -74,7 +80,7 @@ export default function ChallengeCard({
         disabled={!isActive && !canActivate && !locked}
       >
         {locked && '🔒 '}
-        {isActive ? 'Desactivar reto' : (canActivate ? 'Activar reto' : 'Límite alcanzado')}
+        {isActive ? t('retos.deactivate') : (canActivate ? t('retos.activate') : t('retos.limitReached'))}
       </button>
     </article>
   );
