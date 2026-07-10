@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
+import GoogleIcon from './GoogleIcon';
 
 export default function AuthModal() {
   const { t } = useTranslation();
@@ -115,7 +116,7 @@ export default function AuthModal() {
               onClick={handleGoogle}
               disabled={busy}
             >
-              <span className="auth-google-icon" aria-hidden="true">G</span>
+              <GoogleIcon size={20} className="auth-google-icon" />
               {t('auth.google')}
             </button>
             <p className="auth-divider"><span>{t('auth.orEmail')}</span></p>
