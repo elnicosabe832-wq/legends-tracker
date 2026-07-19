@@ -33,6 +33,32 @@ export const EA_FC_DATABASE = [
         clubs: clubs(
           'Leeds United', 'Sheffield United', 'Burnley', 'Sunderland', 'West Bromwich Albion',
           'Middlesbrough', 'Norwich City', 'Coventry City', 'Bristol City', 'Watford',
+          'Hull City', 'Preston North End', 'Blackburn Rovers', 'Sheffield Wednesday',
+          'Swansea City', 'Cardiff City', 'Queens Park Rangers', 'Millwall',
+        ),
+      },
+      {
+        id: 'league-one',
+        name: 'EFL League One',
+        clubs: clubs(
+          'Birmingham City', 'Wrexham', 'Stockport County', 'Huddersfield Town',
+          'Bolton Wanderers', 'Reading', 'Barnsley', 'Blackpool', 'Charlton Athletic',
+          'Leyton Orient', 'Lincoln City', 'Rotherham United', 'Stevenage', 'Wycombe Wanderers',
+          'Exeter City', 'Mansfield Town', 'Peterborough United', 'Northampton Town',
+          'Burton Albion', 'Crawley Town', 'Cambridge United', 'Shrewsbury Town',
+          'Wigan Athletic', 'Bristol Rovers',
+        ),
+      },
+      {
+        id: 'league-two',
+        name: 'EFL League Two',
+        clubs: clubs(
+          'Barrow', 'Accrington Stanley', 'AFC Wimbledon', 'Bradford City', 'Bromley',
+          'Carlisle United', 'Cheltenham Town', 'Chesterfield', 'Colchester United',
+          'Crewe Alexandra', 'Doncaster Rovers', 'Fleetwood Town', 'Gillingham',
+          'Grimsby Town', 'Harrogate Town', 'Milton Keynes Dons', 'Morecambe',
+          'Newport County', 'Notts County', 'Port Vale', 'Salford City', 'Swindon Town',
+          'Tranmere Rovers', 'Walsall',
         ),
       },
     ],
