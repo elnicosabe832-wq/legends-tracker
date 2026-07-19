@@ -146,6 +146,20 @@
     "chartRating": "Índice rend.",
     "chartLocked": "Histórico completo de gráficos"
   },
+  "shareHistory": {
+    "title": "Tu Carrera vs. Historia Real del Club",
+    "noRecords": "Has vinculado {{club}}, pero aún no tenemos récords históricos cargados para este equipo.",
+    "vsHint": "(todas las competiciones) comparado con los récords históricos del club.",
+    "colRecord": "Récord del club",
+    "colYou": "Tu Modo Carrera",
+    "colReal": "Récord histórico real",
+    "export": "📸 Compartir captura",
+    "generating": "Generando…",
+    "kicker": "vs Historia Real",
+    "headline": "Mi Modo Carrera ya alcanza hasta el {{pct}}% de los récords históricos del club",
+    "shareTitle": "Legends Tracker — vs Historia Real",
+    "shareText": "Mi carrera con {{club}} contra la historia real del club — Legends Tracker"
+  },
   "retos": {
     "title": "<1>Retos</1> de <2>Carrera</2>",
     "subtitle": "{{name}} — Activa reglas especiales y marca el progreso a mano tras cada temporada.",

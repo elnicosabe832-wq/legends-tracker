@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <circle cx="60" cy="60" r="56" fill="#A50044" stroke="#004D98" stroke-width="6"/>
+  <path d="M20 60 h80" stroke="#004D98" stroke-width="14"/>
+  <path d="M20 42 h80 M20 78 h80" stroke="#FFED02" stroke-width="4"/>
+  <text x="60" y="68" text-anchor="middle" fill="#fff" font-family="Arial Black, sans-serif" font-size="22" font-weight="800">FCB</text>
+</svg>

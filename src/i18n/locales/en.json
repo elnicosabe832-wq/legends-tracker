@@ -146,6 +146,20 @@
     "chartRating": "Perf. index",
     "chartLocked": "Full chart history"
   },
+  "shareHistory": {
+    "title": "Your Career vs. Real Club History",
+    "noRecords": "You linked {{club}}, but we don't have historical records for this club yet.",
+    "vsHint": "(all competitions) compared with the club's all-time records.",
+    "colRecord": "Club record",
+    "colYou": "Your Career Mode",
+    "colReal": "Real historical record",
+    "export": "📸 Share screenshot",
+    "generating": "Generating…",
+    "kicker": "vs Real History",
+    "headline": "My Career Mode already reaches up to {{pct}}% of the club's all-time records",
+    "shareTitle": "Legends Tracker — vs Real History",
+    "shareText": "My {{club}} career vs the club's real history — Legends Tracker"
+  },
   "retos": {
     "title": "Career <1>Challenges</1>",
     "subtitle": "{{name}} — Activate special rules and track progress manually after each season.",

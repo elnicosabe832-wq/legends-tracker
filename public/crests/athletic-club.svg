@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <circle cx="60" cy="60" r="56" fill="#EE2523" stroke="#fff" stroke-width="5"/>
+  <path d="M20 60 h80" stroke="#fff" stroke-width="14"/>
+  <text x="60" y="72" text-anchor="middle" fill="#fff" font-family="Arial Black, sans-serif" font-size="20" font-weight="800">ATH</text>
+</svg>
