@@ -18,6 +18,8 @@ import {
 
 } from '../lib/cloudSync';
 
+import { COMMUNITY_LIKES_EVENT } from '../lib/communityChallengeLikes';
+
 import {
 
   fetchSubscriptionStatus,
@@ -147,6 +149,8 @@ export function AppProvider({ children }) {
   const cloudLoadedFor = useRef(null);
 
   const skipNextCloudSave = useRef(false);
+
+  const cloudUpdatedAt = useRef(null);
 
   const stateRef = useRef(state);
 
@@ -288,7 +292,7 @@ export function AppProvider({ children }) {
 
         if (cancelled) return;
 
-
+        cloudUpdatedAt.current = row?.updated_at || null;
 
         if (row?.data && Object.keys(row.data.userCareers || {}).length > 0) {
 
@@ -298,7 +302,9 @@ export function AppProvider({ children }) {
 
         } else {
 
-          await uploadCloudSave(user.id, stateRef.current);
+          const result = await uploadCloudSave(user.id, stateRef.current, cloudUpdatedAt.current);
+
+          cloudUpdatedAt.current = result.updatedAt;
 
         }
 
@@ -352,7 +358,27 @@ export function AppProvider({ children }) {
 
       try {
 
-        await uploadCloudSave(user.id, state);
+        const result = await uploadCloudSave(user.id, state, cloudUpdatedAt.current);
+
+        if (result.conflict && result.data) {
+
+          const merged = mergeCloudState(stateRef.current, result.data);
+
+          skipNextCloudSave.current = true;
+
+          setState(merged);
+
+          cloudUpdatedAt.current = result.updatedAt;
+
+          const retry = await uploadCloudSave(user.id, merged, result.updatedAt);
+
+          if (!retry.conflict) cloudUpdatedAt.current = retry.updatedAt;
+
+        } else {
+
+          cloudUpdatedAt.current = result.updatedAt;
+
+        }
 
         setSyncStatus('synced');
 
@@ -369,6 +395,58 @@ export function AppProvider({ children }) {
     return () => clearTimeout(timer);
 
   }, [state, user]);
+
+
+
+  // Sincroniza likes del feed de retos cuando cambian (viven fuera del state principal)
+
+  useEffect(() => {
+
+    if (!user || !supabase || cloudLoadedFor.current !== user.id) return undefined;
+
+
+
+    const onLikesChange = () => {
+
+      setSyncStatus('syncing');
+
+      uploadCloudSave(user.id, stateRef.current, cloudUpdatedAt.current)
+
+        .then((result) => {
+
+          if (result.conflict && result.data) {
+
+            const merged = mergeCloudState(stateRef.current, result.data);
+
+            skipNextCloudSave.current = true;
+
+            setState(merged);
+
+            cloudUpdatedAt.current = result.updatedAt;
+
+            return uploadCloudSave(user.id, merged, result.updatedAt);
+
+          }
+
+          cloudUpdatedAt.current = result.updatedAt;
+
+          return result;
+
+        })
+
+        .then(() => setSyncStatus('synced'))
+
+        .catch(() => setSyncStatus('error'));
+
+    };
+
+
+
+    window.addEventListener(COMMUNITY_LIKES_EVENT, onLikesChange);
+
+    return () => window.removeEventListener(COMMUNITY_LIKES_EVENT, onLikesChange);
+
+  }, [user?.id]);
 
 
 

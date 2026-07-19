@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'legends-tracker-community-likes';
+export const COMMUNITY_LIKES_EVENT = 'legends-community-likes-updated';
 
 function readLikedIds() {
   try {
@@ -12,16 +13,24 @@ function readLikedIds() {
 
 function writeLikedIds(ids) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(COMMUNITY_LIKES_EVENT, { detail: ids }));
+  }
 }
 
 export function getUserLikedChallengeIds() {
   return new Set(readLikedIds());
 }
 
+export function setUserLikedChallengeIds(ids) {
+  const unique = [...new Set((ids || []).filter((id) => typeof id === 'string'))];
+  writeLikedIds(unique);
+  return unique;
+}
+
 /** @returns {boolean} nuevo estado: true = liked */
 export function toggleUserChallengeLike(postId) {
-  const ids = readLikedIds();
-  const set = new Set(ids);
+  const set = new Set(readLikedIds());
   if (set.has(postId)) {
     set.delete(postId);
   } else {
