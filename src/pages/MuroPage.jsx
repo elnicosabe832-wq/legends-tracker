@@ -15,6 +15,7 @@ import { getClubRecords, countClubsWithRecords } from '../data/clubRecords';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 const PlayerPerformanceChart = lazy(() => import('../components/PlayerPerformanceChart'));
+const ClubPerformanceChart = lazy(() => import('../components/ClubPerformanceChart'));
 
 const POS_CLASS = ['gold', 'silver', 'bronze', 'normal'];
 const LICENSED_COUNT = countLicensedClubs();
@@ -174,7 +175,8 @@ export default function MuroPage() {
                 showMovers
               />
               <Suspense fallback={<p className="chart-loading">{t('common.loadingCharts')}</p>}>
-                <PlayerPerformanceChart seasons={career.seasons} />
+                <ClubPerformanceChart seasons={career.seasons} career={career} />
+                <PlayerPerformanceChart seasons={career.seasons} career={career} />
               </Suspense>
             </>
           )}

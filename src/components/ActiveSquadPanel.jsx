@@ -9,6 +9,7 @@ import {
 } from '../utils/playerProfileUtils';
 import RetireToHallModal from './RetireToHallModal';
 import PlayerProfileModal from './PlayerProfileModal';
+import PlayerStatsModal from './PlayerStatsModal';
 
 export default function ActiveSquadPanel({ career, onRetired }) {
   const { t } = useTranslation();
@@ -24,6 +25,7 @@ export default function ActiveSquadPanel({ career, onRetired }) {
   const [menuOpen, setMenuOpen] = useState(null);
   const [pendingRetire, setPendingRetire] = useState(null);
   const [editingPlayer, setEditingPlayer] = useState(null);
+  const [viewingPlayer, setViewingPlayer] = useState(null);
   const panelRef = useRef(null);
 
   useEffect(() => {
@@ -76,7 +78,13 @@ export default function ActiveSquadPanel({ career, onRetired }) {
 
   const handleEditClick = (player) => {
     setMenuOpen(null);
+    setViewingPlayer(null);
     setEditingPlayer(player);
+  };
+
+  const handleViewStats = (player) => {
+    setMenuOpen(null);
+    setViewingPlayer(player);
   };
 
   const confirmRetire = (saleFee) => {
@@ -107,7 +115,12 @@ export default function ActiveSquadPanel({ career, onRetired }) {
           const badges = profileBadgeParts(profile, t);
           return (
             <li key={p.name} className="active-squad-row">
-              <div className="active-squad-player">
+              <button
+                type="button"
+                className="active-squad-player active-squad-player-btn"
+                onClick={() => handleViewStats(p)}
+                title={t('muro.viewPlayerStats')}
+              >
                 <strong>{p.name}</strong>
                 <span>
                   {p.pos} · {p.goals}⚽ {p.assists}🎯 · {p.matches} {t('common.matchesPlayed')}
@@ -119,8 +132,16 @@ export default function ActiveSquadPanel({ career, onRetired }) {
                     ))}
                   </span>
                 )}
-              </div>
+              </button>
               <div className="active-squad-actions">
+                <button
+                  type="button"
+                  className="squad-stats-btn"
+                  title={t('muro.viewPlayerStats')}
+                  onClick={() => handleViewStats(p)}
+                >
+                  📊
+                </button>
                 <button
                   type="button"
                   className="squad-edit-btn"
@@ -152,6 +173,9 @@ export default function ActiveSquadPanel({ career, onRetired }) {
                   </button>
                   {menuOpen === p.name && (
                     <div className="squad-menu-dropdown">
+                      <button type="button" onClick={() => handleViewStats(p)}>
+                        📊 {t('muro.viewPlayerStats')}
+                      </button>
                       <button type="button" onClick={() => handleEditClick(p)}>
                         ✏️ {t('playerProfile.edit')}
                       </button>
@@ -183,6 +207,16 @@ export default function ActiveSquadPanel({ career, onRetired }) {
         career={career}
         onSave={(name, profile) => updatePlayerProfile(activeCareer, name, profile)}
         onClose={() => setEditingPlayer(null)}
+      />
+
+      <PlayerStatsModal
+        player={viewingPlayer}
+        career={career}
+        onClose={() => setViewingPlayer(null)}
+        onEditProfile={(p) => {
+          setViewingPlayer(null);
+          setEditingPlayer(p);
+        }}
       />
     </section>
   );
