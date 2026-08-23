@@ -35,6 +35,7 @@ import i18n from '../i18n';
 
 import { buildEnshrinementSnapshot } from '../utils/hallOfFameUtils';
 import { getChallengeById, FREE_ACTIVE_CHALLENGE_LIMIT } from '../data/challenges';
+import { normalizePlayerProfile } from '../utils/playerProfileUtils';
 
 
 
@@ -85,6 +86,8 @@ function loadLocalState() {
           hallOfFame: career.hallOfFame || [],
 
           challenges: career.challenges || { active: [] },
+
+          playerProfiles: career.playerProfiles || {},
 
         };
 
@@ -772,6 +775,8 @@ export function AppProvider({ children }) {
 
       challenges: { active: [] },
 
+      playerProfiles: {},
+
     };
 
     setState((s) => ({
@@ -808,7 +813,7 @@ export function AppProvider({ children }) {
 
       const playersCopy = players.map((p) => ({ ...p }));
 
-      const chronicle = generateChronicle(playersCopy, career.name);
+      const chronicle = generateChronicle(playersCopy, career.name, career.playerProfiles || {});
 
       const replaceIdx = replaceSeasonId
 
@@ -1106,6 +1111,58 @@ export function AppProvider({ children }) {
 
 
 
+  const updatePlayerProfile = useCallback((careerId, playerName, profilePatch) => {
+
+    setState((s) => {
+
+      const c = s.userCareers[careerId];
+
+      if (!c || !playerName) return s;
+
+      const nextProfile = normalizePlayerProfile({
+
+        ...(c.playerProfiles?.[playerName] || {}),
+
+        ...profilePatch,
+
+      });
+
+      const playerProfiles = {
+
+        ...(c.playerProfiles || {}),
+
+        [playerName]: nextProfile,
+
+      };
+
+      const seasons = (c.seasons || []).map((season) => ({
+
+        ...season,
+
+        chronicle: generateChronicle(season.players || [], c.name, playerProfiles),
+
+      }));
+
+      return {
+
+        ...s,
+
+        userCareers: {
+
+          ...s.userCareers,
+
+          [careerId]: { ...c, playerProfiles, seasons },
+
+        },
+
+      };
+
+    });
+
+  }, []);
+
+
+
   const addPlayerToHallOfFame = useCallback((careerId, playerName, { removeFromActiveSquad }) => {
 
     if (!state.isPro) {
@@ -1202,11 +1259,17 @@ export function AppProvider({ children }) {
 
 
 
-  const retirePlayerToHallOfFame = useCallback((careerId, playerName) => {
+  const retirePlayerToHallOfFame = useCallback((careerId, playerName, options = {}) => {
+
+    if (options.saleFee != null && options.saleFee !== '') {
+
+      updatePlayerProfile(careerId, playerName, { saleFee: Number(options.saleFee) });
+
+    }
 
     addPlayerToHallOfFame(careerId, playerName, { removeFromActiveSquad: true });
 
-  }, [addPlayerToHallOfFame]);
+  }, [addPlayerToHallOfFame, updatePlayerProfile]);
 
 
 
@@ -1503,6 +1566,8 @@ export function AppProvider({ children }) {
         enshrinePlayer,
 
         retirePlayerToHallOfFame,
+
+        updatePlayerProfile,
 
         activateChallenge,
 

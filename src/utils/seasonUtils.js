@@ -1,4 +1,11 @@
 import i18n from '../i18n';
+import {
+  formatTransferFee,
+  getPlayerProfile,
+  transferProfitPct,
+  PLAYER_ORIGIN,
+  profileHasData,
+} from './playerProfileUtils';
 
 export function seasonLabel(num) {
   return i18n.t('common.season', { num });
@@ -54,11 +61,12 @@ export function buildRankings(players) {
 
 export function getSeasonData(career, seasonId) {
   const seasons = career.seasons || [];
+  const profiles = career.playerProfiles || {};
   if (seasonId === 'total') {
     const players = aggregatePlayers(seasons);
     const chronicle = seasons.length > 1
-      ? generateHistoricalChronicle(seasons, career.name)
-      : (seasons[0]?.chronicle || generateChronicle(players, career.name));
+      ? generateHistoricalChronicle(seasons, career.name, profiles)
+      : (seasons[0]?.chronicle || generateChronicle(players, career.name, profiles));
     return {
       label: i18n.t('common.totalHistoric'),
       players,
@@ -95,7 +103,83 @@ export function mergePlayerLists(lists) {
   return Object.values(map).filter((p) => p.matches > 0 || p.goals > 0 || p.assists > 0 || p.cleanSheets > 0);
 }
 
-export function generateChronicle(players, teamName) {
+function profileFlavor(player, profiles) {
+  if (!player) return '';
+  const profile = getPlayerProfile({ playerProfiles: profiles }, player.name);
+  if (!profileHasData(profile)) return '';
+
+  const bits = [];
+  if (profile.age) bits.push(`${profile.age} años`);
+  if (profile.origin === PLAYER_ORIGIN.academy) bits.push('canterano');
+  if (profile.origin === PLAYER_ORIGIN.signing) {
+    const fee = formatTransferFee(profile.transferFee);
+    bits.push(fee ? `fichaje de ${fee}` : 'fichaje');
+  }
+  return bits.length ? ` (${bits.join(', ')})` : '';
+}
+
+function buildProfileParagraphs(players, profiles) {
+  if (!profiles || !Object.keys(profiles).length) return [];
+
+  const paragraphs = [];
+  const academy = players.filter((p) => profiles[p.name]?.origin === PLAYER_ORIGIN.academy);
+  const signings = players
+    .filter((p) => profiles[p.name]?.origin === PLAYER_ORIGIN.signing)
+    .map((p) => ({ p, profile: normalizeInline(profiles[p.name]) }))
+    .sort((a, b) => (b.profile.transferFee || 0) - (a.profile.transferFee || 0));
+
+  if (academy.length) {
+    const names = academy.slice(0, 3).map((p) => p.name).join(', ');
+    paragraphs.push(
+      academy.length === 1
+        ? `🏫 Cantera: ${names} representa el proyecto de formación del club esta temporada.`
+        : `🏫 Cantera: ${names}${academy.length > 3 ? ` y ${academy.length - 3} más` : ''} aportan minutos de casa.`,
+    );
+  }
+
+  if (signings.length) {
+    const top = signings[0];
+    const fee = formatTransferFee(top.profile.transferFee);
+    paragraphs.push(
+      fee
+        ? `💰 Mercado: el desembolso más alto es ${top.p.name} (${fee})${top.p.goals ? `, ya con ${top.p.goals} goles` : ''}.`
+        : `💰 Mercado: ${signings.length} fichaje${signings.length > 1 ? 's' : ''} refuerzan la plantilla.`,
+    );
+  }
+
+  const deals = Object.entries(profiles)
+    .map(([name, raw]) => {
+      const profile = normalizeInline(raw);
+      const pct = transferProfitPct(profile.transferFee, profile.saleFee);
+      return pct == null ? null : { name, pct, profile };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.pct - a.pct);
+
+  if (deals.length) {
+    const best = deals[0];
+    const feeIn = formatTransferFee(best.profile.transferFee);
+    const feeOut = formatTransferFee(best.profile.saleFee);
+    paragraphs.push(
+      best.pct >= 0
+        ? `📈 Operación redonda: ${best.name} se fichó por ${feeIn} y se vendió por ${feeOut} (${best.pct >= 0 ? '+' : ''}${best.pct}%).`
+        : `📉 Balance de mercado: ${best.name} salió por ${feeOut} tras costar ${feeIn} (${best.pct}%).`,
+    );
+  }
+
+  return paragraphs;
+}
+
+function normalizeInline(raw) {
+  return {
+    age: raw?.age != null ? Number(raw.age) : null,
+    origin: raw?.origin || null,
+    transferFee: raw?.transferFee != null ? Number(raw.transferFee) : null,
+    saleFee: raw?.saleFee != null ? Number(raw.saleFee) : null,
+  };
+}
+
+export function generateChronicle(players, teamName, profiles = {}) {
   const by = (key) => [...players].sort((a, b) => b[key] - a[key]);
   const topG = by('goals')[0];
   const topA = by('assists')[0];
@@ -103,21 +187,47 @@ export function generateChronicle(players, teamName) {
   const topCS = players.filter((p) => p.pos === 'POR').sort((a, b) => b.cleanSheets - a.cleanSheets)[0]
     || by('cleanSheets')[0];
 
+  const flavorG = profileFlavor(topG, profiles);
+  const profileParas = buildProfileParagraphs(players, profiles);
+
+  const sidebarExtras = [];
+  const youngStar = [...players]
+    .map((p) => ({ p, profile: normalizeInline(profiles[p.name]) }))
+    .filter((x) => x.profile.age && x.profile.age <= 23 && (x.p.goals > 0 || x.p.assists > 0))
+    .sort((a, b) => (b.p.goals + b.p.assists) - (a.p.goals + a.p.assists))[0];
+  if (youngStar) {
+    sidebarExtras.push({
+      label: 'Joven promesa',
+      name: youngStar.p.name,
+      value: `${youngStar.profile.age} años`,
+    });
+  }
+  const academyCount = players.filter((p) => profiles[p.name]?.origin === PLAYER_ORIGIN.academy).length;
+  if (academyCount) {
+    sidebarExtras.push({
+      label: 'Canteranos',
+      name: `${academyCount} en plantilla`,
+      value: '🏫',
+    });
+  }
+
   return {
     headline: topG
-      ? `${topG.name} lidera los goleadores del ${teamName} con ${topG.goals} tantos`
+      ? `${topG.name}${flavorG} lidera los goleadores del ${teamName} con ${topG.goals} tantos`
       : `Nueva jornada de estadísticas para ${teamName}`,
     body: [
-      topG ? `${topG.name} es el máximo goleador con ${topG.goals} goles en ${topG.matches} partidos.` : '',
-      topA ? `${topA.name} lidera las asistencias con ${topA.assists} pases de gol.` : '',
-      topM ? `${topM.name} es el jugador más utilizado con ${topM.matches} partidos disputados.` : '',
+      topG ? `${topG.name}${flavorG} es el máximo goleador con ${topG.goals} goles en ${topG.matches} partidos.` : '',
+      topA ? `${topA.name}${profileFlavor(topA, profiles)} lidera las asistencias con ${topA.assists} pases de gol.` : '',
+      topM ? `${topM.name}${profileFlavor(topM, profiles)} es el jugador más utilizado con ${topM.matches} partidos disputados.` : '',
       topCS ? `${topCS.name} suma ${topCS.cleanSheets} porterías a cero.` : '',
+      ...profileParas,
     ].filter(Boolean),
     sidebar: [
       topG && { label: 'Goleador', name: topG.name, value: `${topG.goals} goles` },
       topA && { label: 'Asistencias', name: topA.name, value: String(topA.assists) },
       topCS && { label: 'Porterías a cero', name: topCS.name, value: String(topCS.cleanSheets) },
       topM && { label: 'Más partidos', name: topM.name, value: `${topM.matches} PJ` },
+      ...sidebarExtras,
     ].filter(Boolean),
   };
 }
@@ -156,7 +266,7 @@ function lastTwoDelta(history) {
 }
 
 /** Crónica especial que cruza todas las temporadas de la carrera. */
-export function generateHistoricalChronicle(seasons, teamName) {
+export function generateHistoricalChronicle(seasons, teamName, profiles = {}) {
   const totalSeasons = seasons.length;
   const aggregated = aggregatePlayers(seasons);
   const evolution = buildPlayerEvolution(seasons);
@@ -213,10 +323,10 @@ export function generateHistoricalChronicle(seasons, teamName) {
 
   const body = [
     topG
-      ? `Tras ${totalSeasons} temporadas, ${topG.name} es el máximo goleador histórico del ${teamName} con ${topG.goals} tantos en ${topG.matches} partidos.`
+      ? `Tras ${totalSeasons} temporadas, ${topG.name}${profileFlavor(topG, profiles)} es el máximo goleador histórico del ${teamName} con ${topG.goals} tantos en ${topG.matches} partidos.`
       : '',
     topM && topM.name !== topG?.name
-      ? `${topM.name} lleva la mayor carga de minutos acumulados con ${topM.matches} partidos disputados.`
+      ? `${topM.name}${profileFlavor(topM, profiles)} lleva la mayor carga de minutos acumulados con ${topM.matches} partidos disputados.`
       : '',
     seasonSummaries.length
       ? `Resumen por temporada — ${seasonSummaries.join(' · ')}.`
@@ -233,6 +343,7 @@ export function generateHistoricalChronicle(seasons, teamName) {
     declining
       ? `📉 Bajón de rendimiento: ${declining.name} bajó de ${declining.delta.prev.goals} a ${declining.delta.last.goals} goles${declining.delta.matchesDelta < 0 ? ` y perdió ${Math.abs(declining.delta.matchesDelta)} partidos` : ''}.`
       : '',
+    ...buildProfileParagraphs(aggregated, profiles),
   ].filter(Boolean);
 
   const headline = rising && topG?.name === rising.name
@@ -299,6 +410,12 @@ export function generateHistoricalChronicle(seasons, teamName) {
       topA && { label: 'Asistencias totales', name: topA.name, value: String(topA.assists) },
       topM && { label: 'Más partidos', name: topM.name, value: `${topM.matches} PJ` },
       { label: 'Temporadas', name: teamName, value: String(totalSeasons) },
+      (() => {
+        const academyN = aggregated.filter((p) => profiles[p.name]?.origin === PLAYER_ORIGIN.academy).length;
+        return academyN
+          ? { label: 'Canteranos históricos', name: `${academyN} jugadores`, value: '🏫' }
+          : null;
+      })(),
     ].filter(Boolean),
     insights,
   };

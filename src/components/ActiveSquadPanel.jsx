@@ -2,7 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 import { aggregatePlayers, seasonLabel, seasonNumFromId } from '../utils/seasonUtils';
+import {
+  getPlayerProfile,
+  profileBadgeParts,
+  profileHasData,
+} from '../utils/playerProfileUtils';
 import RetireToHallModal from './RetireToHallModal';
+import PlayerProfileModal from './PlayerProfileModal';
 
 export default function ActiveSquadPanel({ career, onRetired }) {
   const { t } = useTranslation();
@@ -12,10 +18,12 @@ export default function ActiveSquadPanel({ career, onRetired }) {
     activeCareer,
     setShowPremiumModal,
     retirePlayerToHallOfFame,
+    updatePlayerProfile,
   } = useApp();
 
   const [menuOpen, setMenuOpen] = useState(null);
   const [pendingRetire, setPendingRetire] = useState(null);
+  const [editingPlayer, setEditingPlayer] = useState(null);
   const panelRef = useRef(null);
 
   useEffect(() => {
@@ -66,9 +74,16 @@ export default function ActiveSquadPanel({ career, onRetired }) {
     setPendingRetire(total);
   };
 
-  const confirmRetire = () => {
+  const handleEditClick = (player) => {
+    setMenuOpen(null);
+    setEditingPlayer(player);
+  };
+
+  const confirmRetire = (saleFee) => {
     if (!pendingRetire) return;
-    retirePlayerToHallOfFame(activeCareer, pendingRetire.name);
+    retirePlayerToHallOfFame(activeCareer, pendingRetire.name, {
+      saleFee: saleFee !== '' && saleFee != null ? saleFee : undefined,
+    });
     setPendingRetire(null);
     onRetired?.();
   };
@@ -82,49 +97,74 @@ export default function ActiveSquadPanel({ career, onRetired }) {
         </span>
       </div>
       <p className="active-squad-hint">{t('muro.squadHint')}</p>
+      <p className="active-squad-hint active-squad-hint-secondary">
+        {t('playerProfile.squadHint')}
+      </p>
 
       <ul className="active-squad-list">
-        {squadPlayers.map((p) => (
-          <li key={p.name} className="active-squad-row">
-            <div className="active-squad-player">
-              <strong>{p.name}</strong>
-              <span>
-                {p.pos} · {p.goals}⚽ {p.assists}🎯 · {p.matches} {t('common.matchesPlayed')}
-              </span>
-            </div>
-            <div className="active-squad-actions">
-              <button
-                type="button"
-                className="squad-retire-btn"
-                title={t('muro.retireMenu')}
-                onClick={() => handleRetireClick(p)}
-              >
-                👑 {t('muro.retire')}
-              </button>
-              <div className="squad-menu-wrap">
-                <button
-                  type="button"
-                  className="squad-menu-btn"
-                  aria-label="Options"
-                  aria-expanded={menuOpen === p.name}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setMenuOpen(menuOpen === p.name ? null : p.name);
-                  }}
-                >
-                  ⋯
-                </button>
-                {menuOpen === p.name && (
-                  <div className="squad-menu-dropdown">
-                    <button type="button" onClick={() => handleRetireClick(p)}>
-                      👑 {t('muro.retireMenu')}
-                    </button>
-                  </div>
+        {squadPlayers.map((p) => {
+          const profile = getPlayerProfile(career, p.name);
+          const badges = profileBadgeParts(profile, t);
+          return (
+            <li key={p.name} className="active-squad-row">
+              <div className="active-squad-player">
+                <strong>{p.name}</strong>
+                <span>
+                  {p.pos} · {p.goals}⚽ {p.assists}🎯 · {p.matches} {t('common.matchesPlayed')}
+                </span>
+                {badges.length > 0 && (
+                  <span className="player-profile-badges">
+                    {badges.map((b) => (
+                      <span key={b} className="player-profile-badge">{b}</span>
+                    ))}
+                  </span>
                 )}
               </div>
-            </div>
-          </li>
-        ))}
+              <div className="active-squad-actions">
+                <button
+                  type="button"
+                  className="squad-edit-btn"
+                  title={t('playerProfile.edit')}
+                  onClick={() => handleEditClick(p)}
+                >
+                  {profileHasData(profile) ? '✏️' : '＋'} {t('playerProfile.editShort')}
+                </button>
+                <button
+                  type="button"
+                  className="squad-retire-btn"
+                  title={t('muro.retireMenu')}
+                  onClick={() => handleRetireClick(p)}
+                >
+                  👑 {t('muro.retire')}
+                </button>
+                <div className="squad-menu-wrap">
+                  <button
+                    type="button"
+                    className="squad-menu-btn"
+                    aria-label="Options"
+                    aria-expanded={menuOpen === p.name}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuOpen(menuOpen === p.name ? null : p.name);
+                    }}
+                  >
+                    ⋯
+                  </button>
+                  {menuOpen === p.name && (
+                    <div className="squad-menu-dropdown">
+                      <button type="button" onClick={() => handleEditClick(p)}>
+                        ✏️ {t('playerProfile.edit')}
+                      </button>
+                      <button type="button" onClick={() => handleRetireClick(p)}>
+                        👑 {t('muro.retireMenu')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })}
       </ul>
 
       {!isPro && !isDemoMode && (
@@ -133,8 +173,16 @@ export default function ActiveSquadPanel({ career, onRetired }) {
 
       <RetireToHallModal
         player={pendingRetire}
+        career={career}
         onConfirm={confirmRetire}
         onCancel={() => setPendingRetire(null)}
+      />
+
+      <PlayerProfileModal
+        player={editingPlayer}
+        career={career}
+        onSave={(name, profile) => updatePlayerProfile(activeCareer, name, profile)}
+        onClose={() => setEditingPlayer(null)}
       />
     </section>
   );

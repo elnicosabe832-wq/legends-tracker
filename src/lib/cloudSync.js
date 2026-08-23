@@ -24,6 +24,7 @@ export function prepareStateForSave(state) {
       seasons: normalizeSeasonLabels(career.seasons),
       hallOfFame: career.hallOfFame || [],
       challenges: career.challenges || { active: [] },
+      playerProfiles: career.playerProfiles || {},
     };
   }
 

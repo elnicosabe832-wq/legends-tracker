@@ -46,6 +46,9 @@ export default function PeriodicoPage() {
     <div className="page">
       <CareerSelector showDelete />
       <SeasonTabs />
+      <p className="periodico-profile-tip">
+        💡 Añade edad, cantera/fichaje y montos en <strong>Muro → Plantilla activa → Ficha</strong> para personalizar esta crónica.
+      </p>
       <div className="newspaper">
         <div className="newspaper-header">
           <h1>El Periódico</h1>

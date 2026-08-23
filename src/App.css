@@ -979,6 +979,17 @@
     }
 
     /* â”€â”€ El PeriÃ³dico â”€â”€ */
+    .periodico-profile-tip {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin: 0 0 1rem;
+      padding: 0.65rem 1rem;
+      background: rgba(0, 212, 255, 0.06);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 8px;
+    }
+
     .newspaper {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -3058,6 +3069,179 @@
       font-size: 0.85rem;
       color: var(--text-muted);
       margin-bottom: 1rem;
+    }
+
+    .active-squad-hint-secondary {
+      margin-top: -0.55rem;
+      color: var(--electric-blue);
+      font-size: 0.78rem;
+    }
+
+    .player-profile-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.35rem;
+    }
+
+    .player-profile-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      background: rgba(0, 212, 255, 0.12);
+      color: var(--electric-blue);
+    }
+
+    .squad-edit-btn {
+      padding: 0.35rem 0.55rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: rgba(0, 212, 255, 0.08);
+      color: var(--electric-blue);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .squad-edit-btn:hover {
+      border-color: var(--electric-blue);
+    }
+
+    .player-profile-modal {
+      max-width: 26rem;
+    }
+
+    .player-profile-icon {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 0.35rem;
+    }
+
+    .player-profile-sub {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .player-profile-hint {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 1rem;
+    }
+
+    .player-profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .player-profile-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .player-profile-form input[type="number"] {
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-dark);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .player-profile-form small {
+      font-weight: 400;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .player-profile-origin {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem;
+      margin: 0;
+    }
+
+    .player-profile-origin legend {
+      padding: 0 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--neon-green);
+    }
+
+    .origin-option {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center;
+      gap: 0.5rem !important;
+      padding: 0.45rem 0.55rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .origin-option.active {
+      background: rgba(0, 255, 136, 0.1);
+    }
+
+    .origin-option input {
+      accent-color: var(--neon-green);
+    }
+
+    .player-profile-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: center;
+      padding: 0.65rem 0.75rem;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .player-profile-preview .profit {
+      color: var(--neon-green);
+    }
+
+    .player-profile-preview .loss {
+      color: #f87171;
+    }
+
+    .retire-sale-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin: 1rem 0;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: left;
+    }
+
+    .retire-sale-field input {
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-dark);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .retire-sale-field small {
+      font-weight: 400;
+      font-size: 0.72rem;
     }
 
     .active-squad-list {
