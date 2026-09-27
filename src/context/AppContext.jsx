@@ -6,7 +6,7 @@ import { resolveClubSelection } from '../data/eaFcDatabase';
 
 import { getClubRecords } from '../data/clubRecords';
 
-import { supabase, isSupabaseConfigured, verifySupabaseConnection } from '../lib/supabase';
+import { supabase, isSupabaseConfigured, verifySupabaseConnection, bootstrapAuthSession } from '../lib/supabase';
 
 import {
 
@@ -260,60 +260,15 @@ export function AppProvider({ children }) {
 
     let cancelled = false;
 
-    const clearOAuthParamsFromUrl = () => {
-      const url = new URL(window.location.href);
-      const oauthKeys = ['code', 'state', 'error', 'error_description', 'error_code'];
-      let dirty = false;
-      oauthKeys.forEach((k) => {
-        if (url.searchParams.has(k)) {
-          url.searchParams.delete(k);
-          dirty = true;
-        }
-      });
-      if (url.hash && /access_token|error/.test(url.hash)) {
-        url.hash = '';
-        dirty = true;
-      }
-      if (dirty) {
-        window.history.replaceState({}, '', `${url.pathname}${url.search}`);
-      }
-    };
-
-    (async () => {
-      const params = new URLSearchParams(window.location.search);
-      const oauthError = params.get('error_description') || params.get('error');
-
-      if (oauthError) {
-        if (!cancelled) {
-          setAuthError(decodeURIComponent(String(oauthError).replace(/\+/g, ' ')));
-          setShowAuthModal(true);
-          setAuthLoading(false);
-        }
-        clearOAuthParamsFromUrl();
-        return;
-      }
-
-      // PKCE: canjear ?code= por sesión si venimos de Google
-      if (params.get('code')) {
-        const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-        clearOAuthParamsFromUrl();
-        if (cancelled) return;
-        if (error) {
-          setAuthError(error.message || 'No se pudo completar el inicio con Google.');
-          setShowAuthModal(true);
-          setAuthLoading(false);
-          return;
-        }
-        setUser(data.session?.user ?? null);
-        setAuthLoading(false);
-        return;
-      }
-
-      const { data: { session } } = await supabase.auth.getSession();
+    bootstrapAuthSession().then(({ session, error }) => {
       if (cancelled) return;
+      if (error) {
+        setAuthError(error);
+        setShowAuthModal(true);
+      }
       setUser(session?.user ?? null);
       setAuthLoading(false);
-    })();
+    });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
