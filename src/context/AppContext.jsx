@@ -28,7 +28,11 @@ import {
 
   createPortalSession,
 
+  warmStripeApi,
+
 } from '../lib/stripeApi';
+
+import { getStoredReferralCode } from '../lib/referrals';
 
 import { buildDemoCareer, DEMO_CAREER_ID } from '../data/demoCareer';
 import i18n from '../i18n';
@@ -175,6 +179,9 @@ export function AppProvider({ children }) {
   const cloudUpdatedAt = useRef(null);
 
   const stateRef = useRef(state);
+
+  /** Prefetch de URL de Stripe mientras el usuario lee el modal Pro */
+  const checkoutPrefetchRef = useRef(null);
 
 
 
@@ -682,6 +689,17 @@ export function AppProvider({ children }) {
 
 
 
+  const prefetchProCheckout = useCallback((affiliateCode = '') => {
+    if (!user) return;
+    const code = String(affiliateCode || '').trim();
+    const existing = checkoutPrefetchRef.current;
+    if (existing?.code === code && existing.promise) return;
+
+    warmStripeApi();
+    const promise = createCheckoutSession(code);
+    checkoutPrefetchRef.current = { code, promise };
+  }, [user]);
+
   const startProCheckout = useCallback(async (affiliateCode = '') => {
 
     if (!user) {
@@ -695,19 +713,27 @@ export function AppProvider({ children }) {
     }
 
     setProBusy(true);
+    const code = String(affiliateCode || '').trim();
 
     try {
-
-      const url = await createCheckoutSession(affiliateCode);
-
-      window.location.href = url;
+      warmStripeApi();
+      let url;
+      const pre = checkoutPrefetchRef.current;
+      if (pre?.code === code && pre.promise) {
+        try {
+          url = await pre.promise;
+        } catch {
+          url = await createCheckoutSession(code);
+        }
+      } else {
+        url = await createCheckoutSession(code);
+      }
+      checkoutPrefetchRef.current = null;
+      window.location.assign(url);
 
     } catch (err) {
 
       showError(err.message || 'No se pudo iniciar el pago.');
-
-    } finally {
-
       setProBusy(false);
 
     }
@@ -758,9 +784,11 @@ export function AppProvider({ children }) {
 
     }
 
+    warmStripeApi();
+    prefetchProCheckout(getStoredReferralCode());
     setShowPremiumModal(true);
 
-  }, [state.isPro, openBillingPortal]);
+  }, [state.isPro, openBillingPortal, prefetchProCheckout]);
 
 
 
@@ -1592,6 +1620,8 @@ export function AppProvider({ children }) {
         handleProClick,
 
         startProCheckout,
+
+        prefetchProCheckout,
 
         openBillingPortal,
 

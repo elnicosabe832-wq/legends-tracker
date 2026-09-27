@@ -4,6 +4,7 @@ import { apiUrl } from './apiBase';
 const ACTIVE_STATUSES = new Set(['active', 'trialing']);
 
 async function authHeaders() {
+  // getSession es local tras el bootstrap; evita round-trips extra
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.access_token) {
     throw new Error('Debes iniciar sesión para gestionar Pro.');
@@ -12,6 +13,12 @@ async function authHeaders() {
     Authorization: `Bearer ${session.access_token}`,
     'Content-Type': 'application/json',
   };
+}
+
+/** Despierta el API (cold start en Render/etc.) antes del checkout. */
+export function warmStripeApi() {
+  const url = apiUrl('/api/health');
+  return fetch(url, { method: 'GET', cache: 'no-store' }).catch(() => null);
 }
 
 export async function fetchSubscriptionStatus() {

@@ -14,6 +14,7 @@ export default function PremiumModal() {
     showPremiumModal,
     setShowPremiumModal,
     startProCheckout,
+    prefetchProCheckout,
     proBusy,
     user,
     setShowAuthModal,
@@ -30,10 +31,13 @@ export default function PremiumModal() {
 
   useEffect(() => {
     if (!showPremiumModal) return;
-    setReferralCode(getStoredReferralCode());
+    const stored = getStoredReferralCode();
+    setReferralCode(stored);
     setReferralHint('');
     setReferralValid(null);
-  }, [showPremiumModal]);
+    // Mientras el usuario lee el modal, ya pedimos la URL de Stripe
+    if (user) prefetchProCheckout(stored);
+  }, [showPremiumModal, user, prefetchProCheckout]);
 
   if (!showPremiumModal) return null;
 
@@ -43,12 +47,15 @@ export default function PremiumModal() {
     setStoredReferralCode(next);
     setReferralHint('');
     setReferralValid(null);
+    // Sin código: re-prefetch sesión limpia; con código esperamos al blur
+    if (!next && user) prefetchProCheckout('');
   };
 
   const handleReferralBlur = async () => {
     if (!referralCode) {
       setReferralHint('');
       setReferralValid(null);
+      if (user) prefetchProCheckout('');
       return;
     }
     try {
@@ -60,6 +67,7 @@ export default function PremiumModal() {
             ? t('premium.referralFrom', { name: result.displayName })
             : t('premium.referralValid'),
         );
+        if (user) prefetchProCheckout(referralCode);
       } else {
         setReferralValid(false);
         setReferralHint(result.message || t('premium.referralInvalid'));

@@ -1,6 +1,9 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../context/AppContext';
 import LanguageSwitcher from './LanguageSwitcher';
+import SettingsModal from './SettingsModal';
 
 function syncLabel(status, t) {
   if (status === 'syncing') return `☁️ ${t('header.syncing')}`;
@@ -21,10 +24,11 @@ export default function Header() {
     authLoading,
     isSupabaseConfigured,
     setShowAuthModal,
-    signOut,
     syncStatus,
     supabaseConnectionError,
   } = useApp();
+
+  const [showSettings, setShowSettings] = useState(false);
 
   const emailShort = user?.email?.split('@')[0];
   const trialEndsLabel = trialEndsAt
@@ -34,9 +38,9 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-left">
-        <div className="logo">
+        <Link to="/" className="logo logo-link" aria-label={t('header.home')}>
           <span className="green">Legends</span> <span className="blue">Tracker</span>
-        </div>
+        </Link>
         <LanguageSwitcher />
         {isPro && (
           <span className={`pro-badge${isTrialing ? ' is-trial' : ''}`}>
@@ -56,17 +60,44 @@ export default function Header() {
 
         {isSupabaseConfigured && !authLoading && (
           user ? (
-            <div className="auth-user">
+            <button
+              type="button"
+              className="auth-user settings-trigger"
+              onClick={() => setShowSettings(true)}
+              title={t('header.settings')}
+              aria-label={t('header.settings')}
+            >
               <span className="auth-email" title={user.email}>{emailShort}</span>
-              <button type="button" className="auth-btn auth-btn-out" onClick={signOut}>
-                {t('header.signOut')}
-              </button>
-            </div>
-          ) : (
-            <button type="button" className="auth-btn" onClick={() => setShowAuthModal(true)}>
-              {t('header.signIn')}
+              <span className="settings-gear" aria-hidden="true">⚙</span>
             </button>
+          ) : (
+            <>
+              <button type="button" className="auth-btn" onClick={() => setShowAuthModal(true)}>
+                {t('header.signIn')}
+              </button>
+              <button
+                type="button"
+                className="settings-btn"
+                onClick={() => setShowSettings(true)}
+                title={t('header.settings')}
+                aria-label={t('header.settings')}
+              >
+                ⚙
+              </button>
+            </>
           )
+        )}
+
+        {(!isSupabaseConfigured || authLoading) && (
+          <button
+            type="button"
+            className="settings-btn"
+            onClick={() => setShowSettings(true)}
+            title={t('header.settings')}
+            aria-label={t('header.settings')}
+          >
+            ⚙
+          </button>
         )}
 
         <button
@@ -97,6 +128,8 @@ export default function Header() {
           )}
         </button>
       </div>
+
+      <SettingsModal open={showSettings} onClose={() => setShowSettings(false)} />
     </header>
   );
 }

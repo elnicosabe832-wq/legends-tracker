@@ -44,13 +44,18 @@ function readPeriodEnd(subscription) {
   );
 }
 
-async function userEligibleForTrial(userId, customerId) {
-  const row = await getSubscriptionRow(userId);
+async function userEligibleForTrial(userId, customerId, existingRow = null) {
+  const row = existingRow ?? await getSubscriptionRow(userId);
   if (row?.stripe_subscription_id || HAD_SUB_STATUSES.has(row?.status)) {
     return false;
   }
 
+  // Sin customer aún → trial seguro sin llamar a Stripe
   if (!stripe || !customerId) return true;
+
+  // Si el customer acaba de crearse o la DB no tiene suscripción, no hace falta listar en Stripe
+  // (ahorra ~300–800ms). La DB se mantiene al día vía webhooks.
+  if (!row?.stripe_subscription_id) return true;
 
   const { data: subscriptions } = await stripe.subscriptions.list({
     customer: customerId,
@@ -149,13 +154,21 @@ async function requireAuth(req, res, next) {
 async function getOrCreateCustomer(user) {
   const existing = await getSubscriptionRow(user.id);
   if (existing?.stripe_customer_id) {
-    return existing.stripe_customer_id;
+    return { customerId: existing.stripe_customer_id, row: existing, created: false };
   }
 
   const customer = await stripe.customers.create({
     email: user.email,
     metadata: { supabase_user_id: user.id },
   });
+
+  const row = {
+    user_id: user.id,
+    stripe_customer_id: customer.id,
+    stripe_subscription_id: null,
+    status: 'inactive',
+    current_period_end: null,
+  };
 
   await upsertSubscriptionRow({
     userId: user.id,
@@ -165,7 +178,7 @@ async function getOrCreateCustomer(user) {
     periodEnd: null,
   });
 
-  return customer.id;
+  return { customerId: customer.id, row, created: true };
 }
 
 async function resolveAffiliateCode(raw) {
@@ -206,16 +219,26 @@ export async function handleCreateCheckoutSession(req, res) {
   }
 
   try {
-    const affiliateCode = await resolveAffiliateCode(req.body?.affiliateCode);
-    if (req.body?.affiliateCode?.trim() && !affiliateCode) {
+    const rawAffiliate = req.body?.affiliateCode;
+    // Customer + afiliado en paralelo
+    const [customerResult, affiliateCode] = await Promise.all([
+      getOrCreateCustomer(req.user),
+      resolveAffiliateCode(rawAffiliate),
+    ]);
+
+    if (rawAffiliate?.trim() && !affiliateCode) {
       return res.status(400).json({
         error: 'INVALID_REFERRAL',
         message: 'El código de creador no es válido. Compruébalo o déjalo vacío.',
       });
     }
 
-    const customerId = await getOrCreateCustomer(req.user);
-    const offerTrial = await userEligibleForTrial(req.user.id, customerId);
+    const { customerId, row, created } = customerResult;
+    // Si acabamos de crear el customer, trial seguro sin listar suscripciones en Stripe
+    const offerTrial = created
+      ? true
+      : await userEligibleForTrial(req.user.id, customerId, row);
+
     const sessionMeta = {
       supabase_user_id: req.user.id,
       ...(affiliateCode ? { affiliate_code: affiliateCode } : {}),
