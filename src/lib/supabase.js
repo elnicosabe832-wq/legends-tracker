@@ -14,7 +14,17 @@ export const supabaseKeySource = publishableKey
 
 export const isSupabaseConfigured = Boolean(url && key);
 
-export const supabase = isSupabaseConfigured ? createClient(url, key) : null;
+export const supabase = isSupabaseConfigured
+  ? createClient(url, key, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        // Canjeamos el ?code= a mano en AppContext para evitar carreras
+        detectSessionInUrl: false,
+        flowType: 'pkce',
+      },
+    })
+  : null;
 
 export async function verifySupabaseConnection() {
   if (!url || !key) {

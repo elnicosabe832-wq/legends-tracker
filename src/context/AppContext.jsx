@@ -258,35 +258,78 @@ export function AppProvider({ children }) {
 
     if (!supabase) return undefined;
 
+    let cancelled = false;
 
+    const clearOAuthParamsFromUrl = () => {
+      const url = new URL(window.location.href);
+      const oauthKeys = ['code', 'state', 'error', 'error_description', 'error_code'];
+      let dirty = false;
+      oauthKeys.forEach((k) => {
+        if (url.searchParams.has(k)) {
+          url.searchParams.delete(k);
+          dirty = true;
+        }
+      });
+      if (url.hash && /access_token|error/.test(url.hash)) {
+        url.hash = '';
+        dirty = true;
+      }
+      if (dirty) {
+        window.history.replaceState({}, '', `${url.pathname}${url.search}`);
+      }
+    };
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const oauthError = params.get('error_description') || params.get('error');
 
-      setUser(session?.user ?? null);
-
-      setAuthLoading(false);
-
-    });
-
-
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-
-      setUser(session?.user ?? null);
-
-      if (!session) {
-
-        cloudLoadedFor.current = null;
-
-        setSyncStatus('idle');
-
+      if (oauthError) {
+        if (!cancelled) {
+          setAuthError(decodeURIComponent(String(oauthError).replace(/\+/g, ' ')));
+          setShowAuthModal(true);
+          setAuthLoading(false);
+        }
+        clearOAuthParamsFromUrl();
+        return;
       }
 
+      // PKCE: canjear ?code= por sesión si venimos de Google
+      if (params.get('code')) {
+        const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        clearOAuthParamsFromUrl();
+        if (cancelled) return;
+        if (error) {
+          setAuthError(error.message || 'No se pudo completar el inicio con Google.');
+          setShowAuthModal(true);
+          setAuthLoading(false);
+          return;
+        }
+        setUser(data.session?.user ?? null);
+        setAuthLoading(false);
+        return;
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (cancelled) return;
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    })();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') {
+        setAuthLoading(false);
+      }
+      if (!session) {
+        cloudLoadedFor.current = null;
+        setSyncStatus('idle');
+      }
     });
 
-
-
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
 
   }, []);
 
@@ -526,13 +569,20 @@ export function AppProvider({ children }) {
 
     setAuthError(null);
 
-    const redirectTo = `${window.location.origin}${window.location.pathname}`;
+    // Solo el origen: debe coincidir con Redirect URLs en Supabase
+    const redirectTo = window.location.origin;
 
     const { error } = await supabase.auth.signInWithOAuth({
 
       provider: 'google',
 
-      options: { redirectTo },
+      options: {
+        redirectTo,
+        queryParams: {
+          access_type: 'online',
+          prompt: 'select_account',
+        },
+      },
 
     });
 
