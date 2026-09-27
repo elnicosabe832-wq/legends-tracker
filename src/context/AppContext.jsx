@@ -119,7 +119,14 @@ function countCareers(userCareers) {
 
 export function AppProvider({ children }) {
 
-  const [state, setState] = useState(loadLocalState);
+  const [state, setState] = useState(() => {
+    const s = loadLocalState();
+    if (typeof window !== 'undefined'
+      && new URLSearchParams(window.location.search).get('marketing') === '1') {
+      return { ...s, isPro: true };
+    }
+    return s;
+  });
 
   const [user, setUser] = useState(null);
 
@@ -146,6 +153,18 @@ export function AppProvider({ children }) {
   const [errorMessage, setErrorMessage] = useState(null);
 
   const [proBusy, setProBusy] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState('inactive');
+  const [trialAvailable, setTrialAvailable] = useState(true);
+  const [trialEndsAt, setTrialEndsAt] = useState(null);
+
+  const marketingMode = typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('marketing') === '1';
+
+  useEffect(() => {
+    if (marketingMode) {
+      setState((s) => (s.isPro ? s : { ...s, isPro: true }));
+    }
+  }, [marketingMode]);
 
 
 
@@ -539,6 +558,10 @@ export function AppProvider({ children }) {
 
     setSyncStatus('idle');
 
+    setSubscriptionStatus('inactive');
+    setTrialAvailable(true);
+    setTrialEndsAt(null);
+
     setState((s) => ({ ...s, isPro: false }));
 
   }, []);
@@ -553,12 +576,17 @@ export function AppProvider({ children }) {
 
       const data = await fetchSubscriptionStatus();
 
+      setSubscriptionStatus(data.status || 'inactive');
+      setTrialAvailable(data.trialAvailable !== false);
+      setTrialEndsAt(data.trialEndsAt || null);
       setState((s) => ({ ...s, isPro: Boolean(data.isPro) }));
 
       return Boolean(data.isPro);
 
     } catch {
 
+      setSubscriptionStatus('inactive');
+      setTrialEndsAt(null);
       setState((s) => ({ ...s, isPro: false }));
 
       return false;
@@ -573,6 +601,8 @@ export function AppProvider({ children }) {
 
     if (!user) {
 
+      if (marketingMode) return undefined;
+
       setState((s) => (s.isPro ? { ...s, isPro: false } : s));
 
       return undefined;
@@ -583,7 +613,7 @@ export function AppProvider({ children }) {
 
     return undefined;
 
-  }, [user?.id, refreshSubscription]);
+  }, [user?.id, refreshSubscription, marketingMode]);
 
 
 
@@ -626,6 +656,26 @@ export function AppProvider({ children }) {
     return () => { cancelled = true; };
 
   }, [user, refreshSubscription]);
+
+
+
+  // Tras login: si puede probar Pro, muestra el popup de 14 días (una vez por cuenta).
+  useEffect(() => {
+    if (!user?.id || state.isPro || marketingMode) return undefined;
+    if (!trialAvailable) return undefined;
+    if (subscriptionStatus === 'trialing' || subscriptionStatus === 'active') return undefined;
+
+    const key = `legends-trial-offer-${user.id}`;
+    if (localStorage.getItem(key) === '1') return undefined;
+
+    const timer = setTimeout(() => {
+      if (state.isPro || !trialAvailable) return;
+      localStorage.setItem(key, '1');
+      setShowPremiumModal(true);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, [user?.id, state.isPro, subscriptionStatus, trialAvailable, marketingMode]);
 
 
 
@@ -1480,6 +1530,11 @@ export function AppProvider({ children }) {
         authLoading,
 
         isSupabaseConfigured,
+
+        subscriptionStatus,
+        trialAvailable,
+        trialEndsAt,
+        isTrialing: subscriptionStatus === 'trialing',
 
         showAuthModal,
 

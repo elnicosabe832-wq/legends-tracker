@@ -21,8 +21,11 @@
     "proBusy": "Pro...",
     "proActive": "Pro Mode Active",
     "proActiveShort": "PRO",
-    "goPro": "Go Pro · €1.99/mo",
-    "goProShort": "Pro €1.99"
+    "goPro": "Go Pro free",
+    "goProShort": "Pro free",
+    "trialBadge": "TRIAL",
+    "trialActive": "Trial active",
+    "trialActiveUntil": "Trial until {{date}}"
   },
   "nav": {
     "upload": "Upload",
@@ -360,6 +363,13 @@
   "premium": {
     "title": "Don't let your story fade away",
     "lead": "Turn your Career Mode into an <1>eternal legend</1> for less than a coffee a month.",
+    "trialPill": "14-day trial",
+    "trialTitle": "Pro free for 14 days",
+    "trialLead": "Start now with no charge. Then only <1>€1.99/mo</1>. Cancel anytime.",
+    "trialPriceBig": "14 days free",
+    "trialPriceSub": "€0 today",
+    "trialThen": "Then <1>€1.99 per month</1>",
+    "trialThenMonth": "per month",
     "benefits": [
       "Unlimited careers",
       "Real History — compare with club records",
@@ -374,10 +384,15 @@
     "referralFrom": "Code from {{name}}",
     "referralInvalid": "Invalid code",
     "secureNote": "Secure payment with Stripe. Cancel anytime from your account.",
-    "loginHint": "You need to sign in before paying.",
+    "trialBadge": "14 days free",
+    "trialPrice": "€0 for the first 14 days",
+    "trialNote": "You'll unlock Pro free for 14 days. A card is required, but you won't be charged until day 15. Cancel anytime.",
+    "loginHint": "Sign in to activate free Pro.",
     "redirecting": "Redirecting...",
     "checkout": "Go Pro",
     "checkoutLogin": "Sign in and go Pro",
+    "checkoutTrial": "Go Pro free",
+    "checkoutTrialLogin": "Sign in and go Pro free",
     "notNow": "Not now"
   },
   "loading": {
@@ -427,7 +442,7 @@
       },
       {
         "q": "What's included free vs Pro?",
-        "a": "Free: careers, chronicles, wall, cloud sync with account. Pro (€1.99/mo): Real History — compare your players with club historical records."
+        "a": "Free: careers, chronicles, wall, cloud sync with account. Pro (€1.99/mo, with a 14-day free trial): Real History — compare your players with club historical records."
       },
       {
         "q": "Do you store my screenshots?",

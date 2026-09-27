@@ -14,6 +14,17 @@ const stripeSecret = process.env.STRIPE_SECRET_KEY?.trim();
 const priceId = process.env.STRIPE_PRICE_ID?.trim();
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
 const appUrl = (process.env.APP_URL || 'http://localhost:5173').replace(/\/$/, '');
+const TRIAL_DAYS = 14;
+const HAD_SUB_STATUSES = new Set([
+  'active',
+  'trialing',
+  'past_due',
+  'canceled',
+  'unpaid',
+  'paused',
+  'incomplete',
+  'incomplete_expired',
+]);
 
 export const isStripeConfigured = Boolean(stripeSecret && priceId);
 
@@ -33,15 +44,40 @@ function readPeriodEnd(subscription) {
   );
 }
 
+async function userEligibleForTrial(userId, customerId) {
+  const row = await getSubscriptionRow(userId);
+  if (row?.stripe_subscription_id || HAD_SUB_STATUSES.has(row?.status)) {
+    return false;
+  }
+
+  if (!stripe || !customerId) return true;
+
+  const { data: subscriptions } = await stripe.subscriptions.list({
+    customer: customerId,
+    status: 'all',
+    limit: 1,
+  });
+
+  return subscriptions.length === 0;
+}
+
+function trialEndsIso(subscription) {
+  return toPeriodEndIso(subscription?.trial_end);
+}
+
 async function syncSubscriptionForUser(userId) {
   const row = await getSubscriptionRow(userId);
 
   if (!row?.stripe_customer_id || !stripe) {
     const status = row?.status || 'inactive';
+    const trialAvailable = await userEligibleForTrial(userId, row?.stripe_customer_id || null);
     return {
       isPro: isActiveProStatus(status),
       status,
       currentPeriodEnd: row?.current_period_end || null,
+      trialAvailable,
+      trialEndsAt: null,
+      trialDays: TRIAL_DAYS,
     };
   }
 
@@ -53,6 +89,7 @@ async function syncSubscriptionForUser(userId) {
 
   const active = subscriptions.find((sub) => isActiveProStatus(sub.status));
   const chosen = active || subscriptions[0];
+  const trialAvailable = await userEligibleForTrial(userId, row.stripe_customer_id);
 
   if (!chosen) {
     await upsertSubscriptionRow({
@@ -62,7 +99,14 @@ async function syncSubscriptionForUser(userId) {
       status: 'inactive',
       periodEnd: null,
     });
-    return { isPro: false, status: 'inactive', currentPeriodEnd: null };
+    return {
+      isPro: false,
+      status: 'inactive',
+      currentPeriodEnd: null,
+      trialAvailable,
+      trialEndsAt: null,
+      trialDays: TRIAL_DAYS,
+    };
   }
 
   const periodEnd = readPeriodEnd(chosen);
@@ -79,6 +123,9 @@ async function syncSubscriptionForUser(userId) {
     isPro: isActiveProStatus(chosen.status),
     status: chosen.status,
     currentPeriodEnd: periodEnd,
+    trialAvailable,
+    trialEndsAt: chosen.status === 'trialing' ? trialEndsIso(chosen) : null,
+    trialDays: TRIAL_DAYS,
   };
 }
 
@@ -168,9 +215,11 @@ export async function handleCreateCheckoutSession(req, res) {
     }
 
     const customerId = await getOrCreateCustomer(req.user);
+    const offerTrial = await userEligibleForTrial(req.user.id, customerId);
     const sessionMeta = {
       supabase_user_id: req.user.id,
       ...(affiliateCode ? { affiliate_code: affiliateCode } : {}),
+      ...(offerTrial ? { trial_days: String(TRIAL_DAYS) } : {}),
     };
 
     const session = await stripe.checkout.sessions.create({
@@ -183,11 +232,13 @@ export async function handleCreateCheckoutSession(req, res) {
       metadata: sessionMeta,
       subscription_data: {
         metadata: sessionMeta,
+        ...(offerTrial ? { trial_period_days: TRIAL_DAYS } : {}),
       },
       allow_promotion_codes: true,
+      payment_method_collection: 'always',
     });
 
-    return res.json({ url: session.url });
+    return res.json({ url: session.url, trialOffered: offerTrial, trialDays: TRIAL_DAYS });
   } catch (err) {
     console.error('Stripe checkout error:', err);
     return res.status(500).json({
@@ -226,7 +277,13 @@ export async function handleCreatePortalSession(req, res) {
 
 export async function handleSubscriptionStatus(req, res) {
   if (!isSupabaseAdminConfigured) {
-    return res.json({ isPro: false, status: 'unavailable' });
+    return res.json({
+      isPro: false,
+      status: 'unavailable',
+      trialAvailable: false,
+      trialEndsAt: null,
+      trialDays: TRIAL_DAYS,
+    });
   }
 
   try {

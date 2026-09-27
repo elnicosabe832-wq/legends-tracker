@@ -48,7 +48,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 - Con **Entrar** (header): descarga la nube, fusiona con lo local y auto-guarda cada ~1,2 s
 - Badge ☁️ en el header: *Sincronizando* / *Guardado* / *Error*
 
-## Paso 2c: Stripe (Pro real 1,99€/mes)
+## Paso 2c: Stripe (Pro real 1,99€/mes · trial 14 días)
 
 1. Cuenta en [dashboard.stripe.com](https://dashboard.stripe.com) (modo **Test**)
 2. **Product catalog** → producto *Legends Tracker Pro* → **1,99 €/mes** → copia **Price ID** (`price_...`)
@@ -72,7 +72,10 @@ stripe listen --forward-to localhost:3001/api/stripe/webhook
 
 Copia el `whsec_...` → `STRIPE_WEBHOOK_SECRET` y reinicia `npm run dev`.
 
-**Pro:** Entrar → **Hacerse Pro** → Stripe → vuelves con ★ PRO. Tarjeta test: `4242 4242 4242 4242`.
+**Pro / trial:** Entrar → **Probar 14 días gratis** → Stripe Checkout (pide tarjeta, no cobra hasta el día 15) → vuelves con ★ TRIAL / ★ PRO.
+El trial solo se ofrece a cuentas **sin suscripción previa**. Tarjeta test: `4242 4242 4242 4242`.
+
+**Nota:** el estado `trialing` de Stripe ya cuenta como Pro en la app.
 
 ## Paso 3: Arrancar
 

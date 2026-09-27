@@ -17,6 +17,7 @@ export default function PremiumModal() {
     proBusy,
     user,
     setShowAuthModal,
+    trialAvailable,
   } = useApp();
 
   const [referralCode, setReferralCode] = useState('');
@@ -24,6 +25,8 @@ export default function PremiumModal() {
   const [referralValid, setReferralValid] = useState(null);
 
   const benefits = t('premium.benefits', { returnObjects: true });
+  // Por defecto ofrecemos trial; solo lo ocultamos si el backend dice explícitamente que no.
+  const showTrial = trialAvailable !== false;
 
   useEffect(() => {
     if (!showPremiumModal) return;
@@ -79,20 +82,57 @@ export default function PremiumModal() {
   return (
     <div className="modal-overlay visible" onClick={() => setShowPremiumModal(false)}>
       <div className="modal premium-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={() => setShowPremiumModal(false)}>✕</button>
+        <button type="button" className="modal-close" onClick={() => setShowPremiumModal(false)}>✕</button>
         <div className="crown">👑</div>
-        <h2>{t('premium.title')}</h2>
-        <p className="premium-modal-lead">
-          <Trans i18nKey="premium.lead" components={{ 1: <strong /> }} />
-        </p>
+
+        {showTrial ? (
+          <>
+            <div className="premium-trial-hero">
+              <span className="premium-trial-pill">{t('premium.trialPill')}</span>
+              <h2>{t('premium.trialTitle')}</h2>
+              <p className="premium-modal-lead">
+                <Trans i18nKey="premium.trialLead" components={{ 1: <strong /> }} />
+              </p>
+            </div>
+
+            <div className="premium-trial-card">
+              <div className="premium-trial-steps">
+                <div className="premium-trial-step">
+                  <span className="premium-trial-step-n">1</span>
+                  <div>
+                    <strong>{t('premium.trialPriceBig')}</strong>
+                    <span>{t('premium.trialPriceSub')}</span>
+                  </div>
+                </div>
+                <div className="premium-trial-step-arrow" aria-hidden="true">→</div>
+                <div className="premium-trial-step">
+                  <span className="premium-trial-step-n">2</span>
+                  <div>
+                    <strong>1,99 €</strong>
+                    <span>{t('premium.trialThenMonth')}</span>
+                  </div>
+                </div>
+              </div>
+              <p className="premium-trial-card-then">
+                <Trans i18nKey="premium.trialThen" components={{ 1: <strong /> }} />
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2>{t('premium.title')}</h2>
+            <p className="premium-modal-lead">
+              <Trans i18nKey="premium.lead" components={{ 1: <strong /> }} />
+            </p>
+            <div className="price">1,99€<span>/mes</span></div>
+          </>
+        )}
 
         <ul className="premium-benefits">
           {Array.isArray(benefits) && benefits.map((b) => (
             <li key={b}>{b}</li>
           ))}
         </ul>
-
-        <div className="price">1,99€<span>/mes</span></div>
 
         <label className="referral-field">
           <span className="referral-label">{t('premium.referralLabel')}</span>
@@ -114,19 +154,26 @@ export default function PremiumModal() {
           )}
         </label>
 
-        <p className="premium-note">{t('premium.secureNote')}</p>
+        <p className="premium-note">
+          {showTrial ? t('premium.trialNote') : t('premium.secureNote')}
+        </p>
         {!user && (
           <p className="premium-login-hint">{t('premium.loginHint')}</p>
         )}
         <div className="modal-actions premium-modal-actions">
           <button
+            type="button"
             className="modal-btn-primary"
             onClick={handleCheckout}
             disabled={proBusy || referralValid === false}
           >
-            {proBusy ? t('premium.redirecting') : (user ? t('premium.checkout') : t('premium.checkoutLogin'))}
+            {proBusy
+              ? t('premium.redirecting')
+              : user
+                ? (showTrial ? t('premium.checkoutTrial') : t('premium.checkout'))
+                : (showTrial ? t('premium.checkoutTrialLogin') : t('premium.checkoutLogin'))}
           </button>
-          <button className="modal-btn-secondary" onClick={() => setShowPremiumModal(false)}>
+          <button type="button" className="modal-btn-secondary" onClick={() => setShowPremiumModal(false)}>
             {t('premium.notNow')}
           </button>
         </div>

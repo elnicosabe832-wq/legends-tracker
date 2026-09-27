@@ -21,8 +21,11 @@
     "proBusy": "Pro...",
     "proActive": "Modo Pro Activo",
     "proActiveShort": "PRO",
-    "goPro": "Hacerse Pro · 1,99€/mes",
-    "goProShort": "Pro 1,99€"
+    "goPro": "Hacerse Pro gratis",
+    "goProShort": "Pro gratis",
+    "trialBadge": "TRIAL",
+    "trialActive": "Trial activo",
+    "trialActiveUntil": "Trial hasta {{date}}"
   },
   "nav": {
     "upload": "Carga",
@@ -360,6 +363,13 @@
   "premium": {
     "title": "No dejes que tu historia se borre",
     "lead": "Convierte tu Modo Carrera en una <1>leyenda eterna</1> por menos de un café al mes.",
+    "trialPill": "14 días de prueba",
+    "trialTitle": "Pro gratis durante 14 días",
+    "trialLead": "Empieza ahora sin pagar. Después solo <1>1,99 €/mes</1>. Cancela cuando quieras.",
+    "trialPriceBig": "14 días gratis",
+    "trialPriceSub": "0 € hoy",
+    "trialThen": "Después <1>1,99 € al mes</1>",
+    "trialThenMonth": "al mes",
     "benefits": [
       "Carreras ilimitadas",
       "Historia Real — compara con récords del club",
@@ -374,10 +384,15 @@
     "referralFrom": "Código de {{name}}",
     "referralInvalid": "Código no válido",
     "secureNote": "Pago seguro con Stripe. Cancela cuando quieras desde tu cuenta.",
-    "loginHint": "Necesitas iniciar sesión antes de pagar.",
+    "trialBadge": "14 días gratis",
+    "trialPrice": "0€ los primeros 14 días",
+    "trialNote": "Activarás Pro gratis 14 días. Se pide tarjeta, pero no se cobra hasta el día 15. Cancela cuando quieras.",
+    "loginHint": "Inicia sesión para activar tu Pro gratis.",
     "redirecting": "Redirigiendo...",
     "checkout": "Hacerse Pro",
     "checkoutLogin": "Entrar y hacerse Pro",
+    "checkoutTrial": "Hacerse Pro gratis",
+    "checkoutTrialLogin": "Entrar y hacerse Pro gratis",
     "notNow": "Ahora no"
   },
   "loading": {
@@ -427,7 +442,7 @@
       },
       {
         "q": "¿Qué incluye gratis vs Pro?",
-        "a": "Gratis: carreras, crónicas, muro, sync en la nube con cuenta. Pro (1,99 €/mes): Historia Real — comparar tus jugadores con récords históricos del club."
+        "a": "Gratis: carreras, crónicas, muro, sync en la nube con cuenta. Pro (1,99 €/mes, con 14 días de prueba gratis): Historia Real — comparar tus jugadores con récords históricos del club."
       },
       {
         "q": "¿Guardáis mis capturas?",

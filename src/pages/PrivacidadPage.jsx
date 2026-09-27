@@ -37,7 +37,7 @@ export default function PrivacidadPage() {
         <ul>
           <li>Identificarte y sincronizar tus carreras entre dispositivos.</li>
           <li>Leer capturas de EA FC y generar crónicas y estadísticas.</li>
-          <li>Gestionar la suscripción Pro (1,99 €/mes).</li>
+          <li>Gestionar la suscripción Pro (1,99 €/mes, con trial de 14 días).</li>
           <li>Mejorar la estabilidad y seguridad del servicio.</li>
         </ul>
       </section>

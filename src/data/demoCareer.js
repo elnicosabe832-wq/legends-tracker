@@ -1,6 +1,7 @@
 import { generateChronicle, normalizeSeasonLabels } from '../utils/seasonUtils';
 import { getMockSeasonRosters, MOCK_HALL_OF_FAME, MOCK_TEAM_NAME } from './mockCareerData';
 import { PLAYER_ORIGIN } from '../utils/playerProfileUtils';
+import { getClubRecords } from './clubRecords';
 
 export const DEMO_CAREER_ID = 'demo-career';
 
@@ -37,8 +38,15 @@ export function buildDemoCareer() {
     subtitle: 'Carrera de ejemplo · Modo Manager · 5 temporadas',
     isDemo: true,
     seasons,
-    linkedClub: 'Real Betis',
-    realLife: [],
+    linkedClub: {
+      countryId: 'espana',
+      countryName: 'España',
+      leagueId: 'laliga',
+      leagueName: 'LALIGA EA SPORTS',
+      clubId: 'real-betis',
+      clubName: 'Real Betis',
+    },
+    realLife: getClubRecords('real-betis'),
     hallOfFame: MOCK_HALL_OF_FAME.map((entry) => ({ ...entry })),
     playerProfiles,
     challenges: {

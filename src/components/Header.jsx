@@ -13,6 +13,8 @@ export default function Header() {
   const { t } = useTranslation();
   const {
     isPro,
+    isTrialing,
+    trialEndsAt,
     handleProClick,
     proBusy,
     user,
@@ -25,6 +27,9 @@ export default function Header() {
   } = useApp();
 
   const emailShort = user?.email?.split('@')[0];
+  const trialEndsLabel = trialEndsAt
+    ? new Date(trialEndsAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
+    : null;
 
   return (
     <header className="header">
@@ -33,7 +38,11 @@ export default function Header() {
           <span className="green">Legends</span> <span className="blue">Tracker</span>
         </div>
         <LanguageSwitcher />
-        {isPro && <span className="pro-badge">★ PRO</span>}
+        {isPro && (
+          <span className={`pro-badge${isTrialing ? ' is-trial' : ''}`}>
+            {isTrialing ? `★ ${t('header.trialBadge')}` : '★ PRO'}
+          </span>
+        )}
         {user && syncStatus !== 'idle' && (
           <span className={`sync-badge sync-${syncStatus}`}>{syncLabel(syncStatus, t)}</span>
         )}
@@ -69,8 +78,16 @@ export default function Header() {
             <span>{t('header.proBusy')}</span>
           ) : isPro ? (
             <>
-              <span className="pro-btn-label-full">✓ {t('header.proActive')}</span>
-              <span className="pro-btn-label-short">✓ {t('header.proActiveShort')}</span>
+              <span className="pro-btn-label-full">
+                ✓ {isTrialing
+                  ? (trialEndsLabel
+                    ? t('header.trialActiveUntil', { date: trialEndsLabel })
+                    : t('header.trialActive'))
+                  : t('header.proActive')}
+              </span>
+              <span className="pro-btn-label-short">
+                ✓ {isTrialing ? t('header.trialBadge') : t('header.proActiveShort')}
+              </span>
             </>
           ) : (
             <>

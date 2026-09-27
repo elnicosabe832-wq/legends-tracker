@@ -162,6 +162,143 @@
       margin-left: 1rem;
     }
 
+    .pro-badge.is-trial {
+      background: linear-gradient(135deg, var(--gold), #f59e0b);
+    }
+
+    .premium-trial-badge {
+      display: inline-block;
+      margin: 0 auto 1rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .premium-trial-hero {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .premium-trial-pill {
+      display: inline-block;
+      margin-bottom: 0.65rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(255, 215, 0, 0.12);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .premium-trial-card {
+      margin: 0 auto 1.25rem;
+      max-width: 360px;
+      padding: 1rem 1.15rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 215, 0, 0.45);
+      background: linear-gradient(145deg, rgba(255, 215, 0, 0.12), rgba(0, 255, 136, 0.06));
+      text-align: center;
+    }
+
+    .premium-trial-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .premium-trial-step {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-align: left;
+      min-width: 120px;
+    }
+
+    .premium-trial-step-n {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--bg-dark);
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .premium-trial-step strong {
+      display: block;
+      font-size: 1rem;
+      color: var(--gold);
+      line-height: 1.2;
+    }
+
+    .premium-trial-step span {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .premium-trial-step-arrow {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .premium-trial-card-price strong {
+      display: block;
+      font-size: 1.55rem;
+      color: var(--gold);
+      line-height: 1.2;
+    }
+
+    .premium-trial-card-price span {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.9rem;
+      color: var(--neon-green);
+      font-weight: 700;
+    }
+
+    .premium-trial-card-then {
+      margin: 0.75rem 0 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .premium-trial-card-then strong {
+      color: var(--text);
+    }
+
+    .modal .price .price-trial {
+      display: block;
+      font-size: 1.15rem;
+      color: var(--gold);
+      margin-bottom: 0.15rem;
+    }
+
+    .modal .price .price-then {
+      font-size: 1.35rem;
+      color: var(--neon-green);
+    }
+
+    .modal .price .price-then span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
     .header-left {
       display: flex;
       align-items: center;
