@@ -524,29 +524,27 @@ export function AppProvider({ children }) {
 
     setAuthError(null);
 
-    // Solo el origen: debe coincidir con Redirect URLs en Supabase
     const redirectTo = window.location.origin;
+    try {
+      sessionStorage.setItem('lt-oauth-origin', redirectTo);
+    } catch {
+      /* private mode */
+    }
 
     const { error } = await supabase.auth.signInWithOAuth({
-
       provider: 'google',
-
       options: {
         redirectTo,
+        skipBrowserRedirect: false,
         queryParams: {
-          access_type: 'online',
           prompt: 'select_account',
         },
       },
-
     });
 
     if (error) {
-
       setAuthError(translateAuthError(error.message));
-
       throw error;
-
     }
 
   }, []);

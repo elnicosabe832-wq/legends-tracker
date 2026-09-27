@@ -14,13 +14,17 @@ export const supabaseKeySource = publishableKey
 
 export const isSupabaseConfigured = Boolean(url && key);
 
+/**
+ * Flujo implicit: Google devuelve tokens en el hash (#access_token=...).
+ * Evita el error PKCE «invalid flow state» tan frecuente en SPAs / Strict Mode.
+ */
 export const supabase = isSupabaseConfigured
   ? createClient(url, key, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
-        detectSessionInUrl: false,
-        flowType: 'pkce',
+        detectSessionInUrl: true,
+        flowType: 'implicit',
         storage: typeof window !== 'undefined' ? window.localStorage : undefined,
       },
     })
@@ -37,7 +41,7 @@ function clearOAuthParamsFromUrl() {
       dirty = true;
     }
   });
-  if (current.hash && /access_token|error|refresh_token/.test(current.hash)) {
+  if (current.hash) {
     current.hash = '';
     dirty = true;
   }
@@ -46,15 +50,20 @@ function clearOAuthParamsFromUrl() {
   }
 }
 
+function readHashParams() {
+  if (typeof window === 'undefined' || !window.location.hash) return new URLSearchParams();
+  return new URLSearchParams(window.location.hash.replace(/^#/, ''));
+}
+
 function friendlyOAuthError(message) {
   const raw = String(message || '');
   if (/invalid flow state|no valid flow state/i.test(raw)) {
-    return 'La sesión de Google expiró o se interrumpió. Pulsa otra vez «Continuar con Google».';
+    return 'No se pudo completar el login con Google. Cierra otras pestañas de la app y pulsa otra vez «Continuar con Google».';
   }
   return raw || 'No se pudo completar el inicio con Google.';
 }
 
-/** Una sola vez por carga de página (evita doble canje con React Strict Mode). */
+/** Una sola vez por carga de página. */
 let authBootstrapPromise = null;
 
 export function bootstrapAuthSession() {
@@ -62,8 +71,12 @@ export function bootstrapAuthSession() {
   if (authBootstrapPromise) return authBootstrapPromise;
 
   authBootstrapPromise = (async () => {
-    const params = new URLSearchParams(window.location.search);
-    const oauthError = params.get('error_description') || params.get('error');
+    const query = new URLSearchParams(window.location.search);
+    const hash = readHashParams();
+    const oauthError = query.get('error_description')
+      || hash.get('error_description')
+      || query.get('error')
+      || hash.get('error');
 
     if (oauthError) {
       clearOAuthParamsFromUrl();
@@ -73,24 +86,38 @@ export function bootstrapAuthSession() {
       };
     }
 
-    if (params.get('code')) {
-      const href = window.location.href;
-      const { data, error } = await supabase.auth.exchangeCodeForSession(href);
+    // Legacy PKCE (?code=): intentar canje una sola vez si aparece
+    if (query.get('code')) {
+      const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
       clearOAuthParamsFromUrl();
-
-      if (error) {
-        // Si Strict Mode ya canjeó el code, la sesión puede existir igual
-        const { data: existing } = await supabase.auth.getSession();
-        if (existing?.session) {
-          return { session: existing.session, error: null };
-        }
-        return { session: null, error: friendlyOAuthError(error.message) };
+      if (!error && data.session) {
+        return { session: data.session, error: null };
       }
-
-      return { session: data.session ?? null, error: null };
+      const { data: existing } = await supabase.auth.getSession();
+      if (existing?.session) return { session: existing.session, error: null };
+      return {
+        session: null,
+        error: friendlyOAuthError(error?.message || 'invalid flow state'),
+      };
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
+    // Implicit: detectSessionInUrl parsea #access_token al inicializar el cliente.
+    // getSession() espera a que termine esa inicialización.
+    const { data: { session }, error } = await supabase.auth.getSession();
+    const hadTokenInHash = hash.has('access_token');
+    clearOAuthParamsFromUrl();
+
+    if (error) {
+      return { session: null, error: friendlyOAuthError(error.message) };
+    }
+
+    if (hadTokenInHash && !session) {
+      return {
+        session: null,
+        error: 'Google respondió, pero no se pudo guardar la sesión. Prueba en otra ventana o desactiva bloqueadores.',
+      };
+    }
+
     return { session: session ?? null, error: null };
   })();
 
